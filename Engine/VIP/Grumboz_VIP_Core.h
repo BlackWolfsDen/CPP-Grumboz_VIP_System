@@ -115,7 +115,10 @@ public:
 		static void SetCreatureVIP(uint32 creature_id, uint8 creature_vip);
 		static void SetCreatureMG(uint32 creature_id, uint8 creature_mg);
 
-	// Public Tables
+		// tools
+		void RemoveItem(uint32 id, Player* player);
+
+		// Public Tables
 	std::unordered_map<uint32, VipElements> Vip;
 	std::unordered_map<uint32, ItemVIP> ItemVip;
 	std::unordered_map<uint8, VipMallGPS> MALL;
@@ -137,8 +140,6 @@ private:
 	bool VIP_LEVEL_BONUS_ENABLE;
 	std::string VIP_COIN_NAME;
 
-	// tools
-	void RemoveItem(uint32 id, Player* player);
 };
 
 #define sVIP VIP::instance()

@@ -789,7 +789,7 @@ public: VIP_Coin_Script() : ItemScript("VIP_Coin_Script"){ };
 		}
 };
 
-void RemoveItem(uint32 id, Player* player)
+void VIP::RemoveItem(uint32 id, Player* player)
 {
 	player->DestroyItemCount(uint32(id), 1, true);
 
@@ -819,7 +819,7 @@ public: VIP_Stone_Script() : ItemScript("VIP_Stone_Script"){ };
 
 				sVIP->SetPlayerVIP(acct_id, pVip + 1);
 
-				RemoveItem(sVIP->GetVIPSTONEID(), player);
+				sVIP->RemoveItem(sVIP->GetVIPSTONEID(), player);
 
 				return true;
 			}
