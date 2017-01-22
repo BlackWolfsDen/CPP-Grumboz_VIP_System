@@ -1,6 +1,7 @@
 {\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fnil\fcharset0 Courier New;}{\f1\fnil Consolas;}{\f2\fnil\fcharset0 Consolas;}}
-{\colortbl ;\red0\green0\blue255;\red255\green255\blue255;\red0\green0\blue0;\red163\green21\blue21;\red0\green128\blue0;\red43\green145\blue175;\red128\green128\blue128;}
-{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\f0\fs22 TDB 335.60\par
+{\colortbl ;\red0\green0\blue255;\red255\green255\blue255;\red0\green0\blue0;\red163\green21\blue21;\red0\green128\blue0;\red255\green0\blue0;\red43\green145\blue175;\red128\green128\blue128;}
+{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\f0\fs22 TDB 335.62\par
+\par
 ********************************************************************\par
 C:\\Users\\Gamer\\Desktop\\Trinity Core Boost\\335 Realm\\BWD_335a 2 Bloody WoW\\src\\LuaEngine\\LuaFunctions.h\par
 \par
@@ -8,6 +9,8 @@ add with the includes\par
 [CODE]\par
 \cf1\highlight2\f1\fs19 #include\cf3  \cf4 "Grumboz_VIP_Core.h"\cf3\par
 \cf0\highlight0\f0\fs22 [/CODE]\par
+\par
+just add the lines inside the `[CODE][/CODE]` blocks to there prospective postitions.\par
 \par
 Global::Getters\par
 [CODE]\par
@@ -32,17 +35,17 @@ Global::Boolian\par
 Player Methods::Getters\par
 [CODE]\par
 \cf3\highlight2\f1\fs19\tab\cf5 // Grumboz VIP Engine player \f2 getter \f1 methods\cf3\par
-\tab\{ \cf4 "Get\cf3 Player\cf4 VIP"\cf3 , &LuaPlayer::GetPlayerVIP \},\tab\tab\tab\tab\cf5 // player:GetVIP(); returns uint8 value of a players VIP rank.\cf3\par
-\tab\{ \cf4 "Get\cf3 Player\cf4 MG"\cf3 , &LuaPlayer::GetPlayerMG \},\tab\tab\tab\tab\tab\cf5 // player:GetMG(); returns uint32 value of players total mg stored.(NOT IN INVENTORY)\cf3\par
-\tab\{ \cf4 "Get\cf3 Player\cf4 VOTES"\cf3 , &LuaPlayer::GetPlayerVOTES \},\tab\tab\tab\cf5 // player:GetVOTES(); returns uint32 value of players total voting count.\cf3\par
+\tab\{ \cf4 "Get\cf3 Player\cf4 VIP"\cf3 , &LuaPlayer::GetPlayerVIP \},\tab\tab\tab\tab\cf5 // player:Get\f2 Player\f1 VIP(); returns uint8 value of a players VIP rank.\cf3\par
+\tab\{ \cf4 "Get\cf3 Player\cf4 MG"\cf3 , &LuaPlayer::GetPlayerMG \},\tab\tab\tab\tab\tab\cf5 // player:Get\f2 Player\f1 MG(); returns uint32 value of players total mg stored.(NOT IN INVENTORY)\cf3\par
+\tab\{ \cf4 "Get\cf3 Player\cf4 VOTES"\cf3 , &LuaPlayer::GetPlayerVOTES \},\tab\tab\tab\cf5 // player:Get\f2 Player\f1 VOTES(); returns uint32 value of players total voting count.\cf3\par
 \cf0\highlight0\f0\fs22 [/CODE]\par
 \par
 Player Methods::Setters\par
 [CODE]\par
-\cf3\highlight2\f1\fs19\tab\cf5 // Grumboz VIP Engine player \f2 setter \f1 methods \cf3\par
-\tab\{ \cf4 "Set\cf3 Player\cf4 VIP"\cf3 , &LuaPlayer::SetPlayerVIP \},\par
-\tab\{ \cf4 "Set\cf3 Player\cf4 MG"\cf3 , &LuaPlayer::SetPlayerMG \},\par
-\tab\{ \cf4 "Set\cf3 Player\cf4 VOTES"\cf3 , &LuaPlayer::SetPlayerVOTES \},\par
+\cf3\highlight2\f1\fs19\tab\cf5 // Grumboz VIP Engine player setter methods \cf3\par
+\tab\{ \cf4 "SetPlayerVIP"\cf3 , &LuaPlayer::SetPlayerVIP \},\par
+\tab\{ \cf4 "SetPlayerMG"\cf3 , &LuaPlayer::SetPlayerMG \},\par
+\tab\{ \cf4 "SetPlayerVOTES"\cf3 , &LuaPlayer::SetPlayerVOTES \},\par
 \cf0\highlight0\f0\fs22 [/CODE]\par
 \par
 Creature Methods::Getters\par
@@ -70,7 +73,12 @@ Player Methods::Setters\par
 \tab\{ \cf4 "SetItemVIP"\cf3 , &LuaItem::SetItemVIP \},\par
 \cf0\highlight0\f0\fs22 [/CODE]\par
 \par
+\cf6 *********************************************************\par
+\cf0\par
+just add the lines inside the `[CODE][/CODE]` blocks to there prospective postitions.\par
+\cf6\par
 *********************************************************\par
+\cf0\par
 GlobalMethods.h\par
 \par
 add with the includes\par
@@ -79,59 +87,60 @@ add with the includes\par
 \cf0\highlight0\f0\fs22 [/CODE]\par
 \par
 [CODE]\par
-\cf3\highlight2\f1\fs19\tab\cf5 // Grumboz VIP Engine player methods\cf3\par
+\cf3\highlight2\f1\fs19\tab\cf5 // Grumboz VIP Engine \f2 global \f1 methods\cf3\par
 \tab\cf1 int\cf3  GetVIPMAX(Eluna* \cf5 /*E*/\cf3 , lua_State* L)\par
 \tab\{\par
-\tab\tab Eluna::Push(L, VIP::GetVIPMAX());\par
+\tab\tab Eluna::Push(L, sVIP->GetVIPMAX());\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
 \tab\cf1 int\cf3  GetVIPVOTE_ENABLE(Eluna* \cf5 /*E*/\cf3 , lua_State* L)\par
 \tab\{\par
-\tab\tab Eluna::Push(L, VIP::GetVIPVOTE_ENABLE());\par
+\tab\tab Eluna::Push(L, sVIP->GetVIPVOTE_ENABLE());\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
 \tab\cf1 int\cf3  GetVIPVOTECOUNT(Eluna* \cf5 /*E*/\cf3 , lua_State* L)\par
 \tab\{\par
-\tab\tab Eluna::Push(L, VIP::GetVIPVOTECOUNT());\par
+\tab\tab Eluna::Push(L, sVIP->GetVIPVOTECOUNT());\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
 \tab\cf1 int\cf3  GetVIPCOINID(Eluna* \cf5 /*E*/\cf3 , lua_State* L)\par
 \tab\{\par
-\tab\tab Eluna::Push(L, VIP::GetVIPCOINID());\par
+\tab\tab Eluna::Push(L, sVIP->GetVIPCOINID());\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
 \tab\cf1 int\cf3  GetVIPSTONEID(Eluna* \cf5 /*E*/\cf3 , lua_State* L)\par
 \tab\{\par
-\tab\tab Eluna::Push(L, VIP::GetVIPSTONEID());\par
+\tab\tab Eluna::Push(L, sVIP->GetVIPSTONEID());\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
 \tab\cf1 int\cf3  GetVIPMGID(Eluna* \cf5 /*E*/\cf3 , lua_State* L)\par
 \tab\{\par
-\tab\tab Eluna::Push(L, VIP::GetVIPMGID());\par
+\tab\tab Eluna::Push(L, sVIP->GetVIPMGID());\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
 \tab\cf1 int\cf3  GetVIPOFFSET(Eluna* \cf5 /*E*/\cf3 , lua_State* L)\par
 \tab\{\par
-\tab\tab Eluna::Push(L, VIP::GetVIPOFFSET());\par
+\tab\tab Eluna::Push(L, sVIP->GetVIPOFFSET());\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
 \tab\cf1 int\cf3  GetTALENTBONUS(Eluna* \cf5 /*E*/\cf3 , lua_State* L)\par
 \tab\{\par
-\tab\tab Eluna::Push(L, VIP::GetTALENTBONUS());\par
+\tab\tab Eluna::Push(L, sVIP->GetTALENTBONUS());\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
 \tab\cf1 int\cf3  GetLEVELBONUS_ENABLE(Eluna* \cf5 /*E*/\cf3 , lua_State* L)\par
 \tab\{\par
-\tab\tab Eluna::Push(L, VIP::GetLEVELBONUS_ENABLE());\par
+\tab\tab Eluna::Push(L, sVIP->GetLEVELBONUS_ENABLE());\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
 \tab\cf1 int\cf3  GetLEVELBONUS(Eluna* \cf5 /*E*/\cf3 , lua_State* L)\par
 \tab\{\par
-\tab\tab Eluna::Push(L, VIP::GetLEVELBONUS());\par
+\tab\tab Eluna::Push(L, sVIP->GetLEVELBONUS());\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
 \cf0\highlight0\f0\fs22 [/CODE]\par
 \par
+*************************************************\par
 PlayerMethods.h\par
 \par
 add with the includes\par
@@ -141,43 +150,43 @@ add with the includes\par
 \par
 [CODE]\par
 \cf3\highlight2\f1\fs19\tab\tab\cf5 // Grumboz VIP Engine player methods\cf3\par
-\tab\tab\cf1 int\cf3  GetPlayerVIP(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Player\cf3 * \cf7 player\cf3 )\par
+\tab\tab\cf1 int\cf3  GetPlayerVIP(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Player\cf3 * \cf8 player\cf3 )\par
 \tab\tab\{\par
-\tab\tab\cf6 uint32\cf3  acctId = \cf7 player\cf3 ->GetSession()->GetAccountId();\par
-\tab\tab\cf6 Eluna\cf3 ::Push(\cf7 L\cf3 , \cf6 VIP\cf3 ::GetPlayerVIP(acctId));\par
+\tab\tab\cf7 uint32\cf3  acctId = \cf8 player\cf3 ->GetSession()->GetAccountId();\par
+\tab\tab\cf7 Eluna\cf3 ::Push(\cf8 L\cf3 , sVIP->GetPlayerVIP(acctId));\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\tab\}\par
-\tab\cf1 int\cf3  GetPlayerMG(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Player\cf3 * \cf7 player\cf3 )\par
+\tab\cf1 int\cf3  GetPlayerMG(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Player\cf3 * \cf8 player\cf3 )\par
 \tab\tab\{\par
-\tab\tab\cf6 uint32\cf3  acctId = \cf7 player\cf3 ->GetSession()->GetAccountId();\par
-\tab\tab\cf6 Eluna\cf3 ::Push(\cf7 L\cf3 , \cf6 VIP\cf3 ::GetPlayerMG(acctId));\par
+\tab\tab\cf7 uint32\cf3  acctId = \cf8 player\cf3 ->GetSession()->GetAccountId();\par
+\tab\tab\cf7 Eluna\cf3 ::Push(\cf8 L\cf3 , sVIP->GetPlayerMG(acctId));\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\tab\}\par
-\tab\cf1 int\cf3  GetPlayerVOTES(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Player\cf3 * \cf7 player\cf3 )\par
+\tab\cf1 int\cf3  GetPlayerVOTES(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Player\cf3 * \cf8 player\cf3 )\par
 \tab\tab\{\par
-\tab\tab\cf6 uint32\cf3  acctId = \cf7 player\cf3 ->GetSession()->GetAccountId();\par
-\tab\tab\cf6 Eluna\cf3 ::Push(\cf7 L\cf3 , \cf6 VIP\cf3 ::GetPlayerVOTES(acctId));\par
+\tab\tab\cf7 uint32\cf3  acctId = \cf8 player\cf3 ->GetSession()->GetAccountId();\par
+\tab\tab\cf7 Eluna\cf3 ::Push(\cf8 L\cf3 , sVIP->GetPlayerVOTES(acctId));\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\tab\}\par
-\tab\cf1 int\cf3  SetPlayerVIP(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Player\cf3 * \cf7 player\cf3 )\par
+\tab\cf1 int\cf3  SetPlayerVIP(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Player\cf3 * \cf8 player\cf3 )\par
 \tab\tab\{\par
-\tab\tab\cf6 uint32\cf3  acctId = \cf7 player\cf3 ->GetSession()->GetAccountId();\par
-\tab\tab\cf6 uint8\cf3  vip = \cf6 Eluna\cf3 ::CHECKVAL<\cf6 uint8\cf3 >(\cf7 L\cf3 , 2);\par
-\tab\tab\cf6 VIP\cf3 ::SetPlayerVIP(acctId, vip);\par
+\tab\tab\cf7 uint32\cf3  acctId = \cf8 player\cf3 ->GetSession()->GetAccountId();\par
+\tab\tab\cf7 uint8\cf3  vip = \cf7 Eluna\cf3 ::CHECKVAL<\cf7 uint8\cf3 >(\cf8 L\cf3 , 2);\par
+\tab\tab sVIP->SetPlayerVIP(acctId, vip);\par
 \tab\tab\cf1 return\cf3  0;\par
 \tab\tab\}\par
-\tab\cf1 int\cf3  SetPlayerMG(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Player\cf3 * \cf7 player\cf3 )\par
+\tab\cf1 int\cf3  SetPlayerMG(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Player\cf3 * \cf8 player\cf3 )\par
 \tab\tab\{\par
-\tab\tab\cf6 uint32\cf3  acctId = \cf7 player\cf3 ->GetSession()->GetAccountId();\par
-\tab\tab\cf6 uint32\cf3  mg = \cf6 Eluna\cf3 ::CHECKVAL<\cf6 uint32\cf3 >(\cf7 L\cf3 , 2);\par
-\tab\tab\cf6 VIP\cf3 ::SetPlayerMG(acctId, mg);\par
+\tab\tab\cf7 uint32\cf3  acctId = \cf8 player\cf3 ->GetSession()->GetAccountId();\par
+\tab\tab\cf7 uint32\cf3  mg = \cf7 Eluna\cf3 ::CHECKVAL<\cf7 uint32\cf3 >(\cf8 L\cf3 , 2);\par
+\tab\tab sVIP->SetPlayerMG(acctId, mg);\par
 \tab\tab\cf1 return\cf3  0;\par
 \tab\tab\}\par
-\tab\cf1 int\cf3  SetPlayerVOTES(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Player\cf3 * \cf7 player\cf3 )\par
+\tab\cf1 int\cf3  SetPlayerVOTES(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Player\cf3 * \cf8 player\cf3 )\par
 \tab\tab\{\par
-\tab\tab\cf6 uint32\cf3  acctId = \cf7 player\cf3 ->GetSession()->GetAccountId();\par
-\tab\tab\cf6 uint32\cf3  votes = \cf6 Eluna\cf3 ::CHECKVAL<\cf6 uint32\cf3 >(\cf7 L\cf3 , 2);\par
-\tab\tab\cf6 VIP\cf3 ::SetPlayerVOTES(acctId, votes);\par
+\tab\tab\cf7 uint32\cf3  acctId = \cf8 player\cf3 ->GetSession()->GetAccountId();\par
+\tab\tab\cf7 uint32\cf3  votes = \cf7 Eluna\cf3 ::CHECKVAL<\cf7 uint32\cf3 >(\cf8 L\cf3 , 2);\par
+\tab\tab sVIP->SetPlayerVOTES(acctId, votes);\par
 \tab\tab\cf1 return\cf3  0;\par
 \tab\tab\}\par
 \cf0\highlight0\f0\fs22 [/CODE]\par
@@ -192,34 +201,34 @@ add with the includes\par
 \par
 [CODE]\par
 \cf3\highlight2\f1\fs19\tab\cf5 // Grumboz VIP Engine creature methods\cf3\par
-\tab\cf1 int\cf3  GetCreatureVIP(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Creature\cf3 * \cf7 creature\cf3 )\par
+\tab\cf1 int\cf3  GetCreatureVIP(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Creature\cf3 * \cf8 creature\cf3 )\par
 \tab\{\par
-\tab\tab\cf6 uint32\cf3  creature_id = \cf7 creature\cf3 ->GetEntry();\par
+\tab\tab\cf7 uint32\cf3  creature_id = \cf8 creature\cf3 ->GetEntry();\par
 \tab\tab\par
-\tab\tab\cf6 Eluna\cf3 ::Push(\cf7 L\cf3 , \cf6 VIP\cf3 ::GetCreatureVIP(creature_id));\par
+\tab\tab\cf7 Eluna\cf3 ::Push(\cf8 L\cf3 , sVIP->GetCreatureVIP(creature_id));\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
-\tab\cf1 int\cf3  GetCreatureMG(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Creature\cf3 * \cf7 creature\cf3 )\par
+\tab\cf1 int\cf3  GetCreatureMG(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Creature\cf3 * \cf8 creature\cf3 )\par
 \tab\{\par
-\tab\tab\cf6 uint32\cf3  creature_id = \cf7 creature\cf3 ->GetEntry();\par
+\tab\tab\cf7 uint32\cf3  creature_id = \cf8 creature\cf3 ->GetEntry();\par
 \par
-\tab\tab\cf6 Eluna\cf3 ::Push(\cf7 L\cf3 , \cf6 VIP\cf3 ::GetCreatureMG(creature_id));\par
+\tab\tab\cf7 Eluna\cf3 ::Push(\cf8 L\cf3 , sVIP->GetCreatureMG(creature_id));\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
-\tab\cf1 int\cf3  SetCreatureVIP(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Creature\cf3 * \cf7 creature\cf3 )\par
+\tab\cf1 int\cf3  SetCreatureVIP(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Creature\cf3 * \cf8 creature\cf3 )\par
 \tab\{\par
-\tab\tab\cf6 uint32\cf3  creature_id = \cf7 creature\cf3 ->GetEntry();\par
-\tab\tab\cf6 uint8\cf3  vip = \cf6 Eluna\cf3 ::CHECKVAL<\cf6 uint8\cf3 >(\cf7 L\cf3 , 2);\par
+\tab\tab\cf7 uint32\cf3  creature_id = \cf8 creature\cf3 ->GetEntry();\par
+\tab\tab\cf7 uint8\cf3  vip = \cf7 Eluna\cf3 ::CHECKVAL<\cf7 uint8\cf3 >(\cf8 L\cf3 , 2);\par
 \par
-\tab\tab\cf6 VIP\cf3 ::SetCreatureVIP(creature_id, vip);\par
+\tab\tab sVIP->SetCreatureVIP(creature_id, vip);\par
 \tab\tab\cf1 return\cf3  0;\par
 \tab\}\par
-\tab\cf1 int\cf3  SetCreatureMG(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Creature\cf3 * \cf7 creature\cf3 )\par
+\tab\cf1 int\cf3  SetCreatureMG(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Creature\cf3 * \cf8 creature\cf3 )\par
 \tab\{\par
-\tab\tab\cf6 uint32\cf3  creature_id = \cf7 creature\cf3 ->GetEntry();\par
-\tab\tab\cf6 uint32\cf3  mg = \cf6 Eluna\cf3 ::CHECKVAL<\cf6 uint32\cf3 >(\cf7 L\cf3 , 2);\par
+\tab\tab\cf7 uint32\cf3  creature_id = \cf8 creature\cf3 ->GetEntry();\par
+\tab\tab\cf7 uint32\cf3  mg = \cf7 Eluna\cf3 ::CHECKVAL<\cf7 uint32\cf3 >(\cf8 L\cf3 , 2);\par
 \par
-\tab\tab\cf6 VIP\cf3 ::SetCreatureMG(creature_id, mg);\par
+\tab\tab sVIP->SetCreatureMG(creature_id, mg);\par
 \tab\tab\cf1 return\cf3  0;\par
 \tab\}\par
 \cf0\highlight0\f0\fs22 [/CODE]\par
@@ -234,17 +243,17 @@ add with the includes\par
 \par
 [CODE]\par
 \cf3\highlight2\f1\fs19\tab\cf5 // Grumboz VIP Engine item methods\cf3\par
-\tab\cf1 int\cf3  GetItemVIP(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Item\cf3 * \cf7 item\cf3 )\par
+\tab\cf1 int\cf3  GetItemVIP(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Item\cf3 * \cf8 item\cf3 )\par
 \tab\{\par
-\tab\tab\cf6 uint32\cf3  item_id = \cf7 item\cf3 ->GetEntry();\par
-\tab\tab\cf6 Eluna\cf3 ::Push(\cf7 L\cf3 , \cf6 VIP\cf3 ::GetItemVIP(item_id));\par
+\tab\tab\cf7 uint32\cf3  item_id = \cf8 item\cf3 ->GetEntry();\par
+\tab\tab\cf7 Eluna\cf3 ::Push(\cf8 L\cf3 , sVIP->GetItemVIP(item_id));\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
-\tab\cf1 int\cf3  SetItemVIP(\cf6 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf6 lua_State\cf3 * \cf7 L\cf3 , \cf6 Item\cf3 * \cf7 item\cf3 )\par
+\tab\cf1 int\cf3  SetItemVIP(\cf7 Eluna\cf3 * \cf5 /*E*/\cf3 , \cf7 lua_State\cf3 * \cf8 L\cf3 , \cf7 Item\cf3 * \cf8 item\cf3 )\par
 \tab\{\par
-\tab\tab\cf6 uint32\cf3  item_id = \cf7 item\cf3 ->GetEntry();\par
-\tab\tab\cf6 uint8\cf3  vip = \cf6 Eluna\cf3 ::CHECKVAL<\cf6 uint8\cf3 >(\cf7 L\cf3 , 2);\par
-\tab\tab\cf6 VIP\cf3 ::SetItemVIP(item_id, vip);\par
+\tab\tab\cf7 uint32\cf3  item_id = \cf8 item\cf3 ->GetEntry();\par
+\tab\tab\cf7 uint8\cf3  vip = \cf7 Eluna\cf3 ::CHECKVAL<\cf7 uint8\cf3 >(\cf8 L\cf3 , 2);\par
+\tab\tab sVIP->SetItemVIP(item_id, vip);\par
 \tab\tab\cf1 return\cf3  1;\par
 \tab\}\par
 \cf0\highlight0\f0\fs22 [/CODE]\par

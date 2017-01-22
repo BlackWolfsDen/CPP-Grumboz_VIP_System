@@ -12,8 +12,10 @@
 #include "RBAC.h"
 #include "ScriptedGossip.h"
 #include "ScriptMgr.h"
+//#include "ScriptPCH.h"
 #include <unordered_map>
 #include "World.h"
+// #include "ScriptPCH.h"
 
 // color definitions since i hate yellow..
 std::string green = "|cff00cc00";
@@ -863,36 +865,36 @@ public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER"){ }
 
 			if (pMg > 0)
 			{
-				player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, "-Deposit-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, "Deposit all my custom currency.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2001);
-				player->ADD_GOSSIP_ITEM(10, deposit_amt.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2001);
-				player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+				AddGossipItemFor(player, GOSSIP_ICON_CHAT, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);			
+				AddGossipItemFor(player, GOSSIP_ICON_CHAT, "-Deposit-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);		
+				AddGossipItemFor(player, GOSSIP_ICON_CHAT, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);				
+				AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Deposit all my custom currency.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2001);
+				AddGossipItemFor(player, GOSSIP_ICON_CHAT, deposit_amt.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2001);
+				AddGossipItemFor(player, GOSSIP_ICON_CHAT, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
 			}
 
 			if (MG >= 10)
 			{
-				player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, "-WithDrawl-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, withdraw10.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2002);
+				AddGossipItemFor(player, GOSSIP_ICON_CHAT, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+				AddGossipItemFor(player, GOSSIP_ICON_CHAT, "-WithDrawl-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+				AddGossipItemFor(player, GOSSIP_ICON_CHAT, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+				AddGossipItemFor(player, GOSSIP_ICON_CHAT,  withdraw10.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2002);
 
-				if (MG >= 101){ player->ADD_GOSSIP_ITEM(10, withdraw100.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2003); };
-				if (MG >= 1010){ player->ADD_GOSSIP_ITEM(10, withdraw1000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2004); };
-				if (MG >= 10100){ player->ADD_GOSSIP_ITEM(10, withdraw10000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2005); };
-				if (MG >= 101000){ player->ADD_GOSSIP_ITEM(10, withdraw100000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2006); };
+				if (MG >= 101){ AddGossipItemFor(player, GOSSIP_ICON_CHAT, withdraw100.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2003); };
+				if (MG >= 1010){ AddGossipItemFor(player, GOSSIP_ICON_CHAT, withdraw1000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2004); };
+				if (MG >= 10100){ AddGossipItemFor(player, GOSSIP_ICON_CHAT, withdraw10000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2005); };
+				if (MG >= 101000){ AddGossipItemFor(player, GOSSIP_ICON_CHAT, withdraw100000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2006); };
 			}
 
-			player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, "-Bank Balance-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, currency_inBank.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, current_VOTES.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, current_VIP.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+			AddGossipItemFor(player, GOSSIP_ICON_CHAT, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+			AddGossipItemFor(player, GOSSIP_ICON_CHAT, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+			AddGossipItemFor(player, GOSSIP_ICON_CHAT, "-Bank Balance-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+			AddGossipItemFor(player, GOSSIP_ICON_CHAT, currency_inBank.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+			AddGossipItemFor(player, GOSSIP_ICON_CHAT, current_VOTES.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+			AddGossipItemFor(player, GOSSIP_ICON_CHAT, current_VIP.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+			AddGossipItemFor(player, GOSSIP_ICON_CHAT, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
 
-			player->SEND_GOSSIP_MENU(1, creature->GetGUID());
+			SendGossipMenuFor(player, 1, creature->GetGUID());
 
 			return true;
 		};
@@ -913,7 +915,7 @@ public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER"){ }
 			case GOSSIP_ACTION_INFO_DEF + 2000: // loopbacks
 
 				player->PlayerTalkClass->ClearMenus();
-				player->CLOSE_GOSSIP_MENU();
+				CloseGossipMenuFor(player);
 
 				OnGossipHello(player, creature);
 				break;
@@ -929,7 +931,7 @@ public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER"){ }
 				};
 
 				player->PlayerTalkClass->ClearMenus();
-				player->CLOSE_GOSSIP_MENU();
+				CloseGossipMenuFor(player);
 
 				OnGossipHello(player, creature);
 				break;
@@ -941,7 +943,7 @@ public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER"){ }
 				if (player->AddItem(itemId, 10))
 				{
 					sVIP->SetPlayerMG(accountId, MG - 10);
-					player->CLOSE_GOSSIP_MENU();
+					CloseGossipMenuFor(player);
 				}
 				break;
 
@@ -952,7 +954,7 @@ public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER"){ }
 				if (player->AddItem(itemId, 100))
 				{
 					sVIP->SetPlayerMG(accountId, MG - 101);
-					player->CLOSE_GOSSIP_MENU();
+					CloseGossipMenuFor(player);
 				}
 
 				OnGossipHello(player, creature);
@@ -964,7 +966,7 @@ public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER"){ }
 				if (player->AddItem(itemId, 1000))
 				{
 					sVIP->SetPlayerMG(accountId, MG - 1010);
-					player->CLOSE_GOSSIP_MENU();
+					CloseGossipMenuFor(player);
 				}
 
 				OnGossipHello(player, creature);
@@ -976,7 +978,7 @@ public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER"){ }
 				if (player->AddItem(itemId, 10000))
 				{
 					sVIP->SetPlayerMG(accountId, MG - 10100);
-					player->CLOSE_GOSSIP_MENU();
+					CloseGossipMenuFor(player);
 				}
 
 				OnGossipHello(player, creature);
@@ -988,7 +990,7 @@ public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER"){ }
 				if (player->AddItem(itemId, 100000))
 				{
 					sVIP->SetPlayerMG(accountId, MG - 101000);
-					player->CLOSE_GOSSIP_MENU();
+					CloseGossipMenuFor(player);
 				}
 
 				OnGossipHello(player, creature);
