@@ -1,0 +1,38 @@
+src/server/game/Loot/LootMgr.cpp b/src/server/game/Loot/LootMgr.cpp
+
+find 
+[CODE]
+bool LootStoreItem::Roll(bool rate) const
+[/CODE]
+
+and edit it to this
+[CODE]
+bool LootStoreItem::Roll(bool rate, uint32 VipRate) const
+[/CODE]
+
+find
+[CODE]
+    return roll_chance_f(chance*qualityModifier);
+[/CODE]
+
+and replace with
+[CODE]
+	return roll_chance_f(chance* (rate ? mod_drop_rate : 1.0f));
+
+[/CODE]
+
+
+
+********************************************
+********************************************
+edit src/server/game/Loot/LootMgr.cpp b/src/server/game/Loot/LootMgr.h
+
+[CODE]
+	bool Roll(bool rate) const;                             // Checks if the entry takes it's chance (at loot generation)
+[/CODE]
+
+edit to 
+[CODE]
+	bool Roll(bool rate, uint32 VipRate) const;                             // Checks if the entry takes it's chance (at loot generation)
+
+[/CODE]

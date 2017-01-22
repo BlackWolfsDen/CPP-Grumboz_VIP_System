@@ -1,0 +1,6 @@
+-- Add these coulmns to your auth.account DB
+
+ALTER TABLE `account`
+	ADD COLUMN `vip` TINYINT(3) UNSIGNED NOT NULL DEFAULT '1' AFTER `activation`,
+	ADD COLUMN `mg` MEDIUMINT(20) UNSIGNED NOT NULL DEFAULT '0' AFTER `vip`,
+	ADD COLUMN `votes` MEDIUMINT(20) UNSIGNED NOT NULL DEFAULT '0' AFTER `mg`;
