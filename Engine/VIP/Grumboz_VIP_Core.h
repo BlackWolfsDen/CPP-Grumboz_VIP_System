@@ -116,7 +116,9 @@ public:
 		static void SetCreatureMG(uint32 creature_id, uint8 creature_mg);
 
 		// tools
+		std::string ConvertNumberToString(uint64 numberX);
 		void RemoveItem(uint32 id, Player* player);
+		void AnnounceLoggingToWorld(Player* player, uint8 type);
 
 		// Public Tables
 	std::unordered_map<uint32, VipElements> Vip;

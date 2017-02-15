@@ -59,7 +59,7 @@ VIP* VIP::instance()
 	return &instance;
 }
 
-std::string ConvertNumberToString(uint64 numberX)
+std::string VIP::ConvertNumberToString(uint64 numberX)
 {
 	auto number = numberX;
 	std::stringstream convert;
@@ -70,7 +70,7 @@ std::string ConvertNumberToString(uint64 numberX)
 	return number32_to_string;
 };
 
-void AnnounceLoggingToWorld(Player* player, uint8 type)
+void VIP::AnnounceLoggingToWorld(Player* player, uint8 type)
 {
 	std::string pName = player->GetName();
 	uint32 acct_id = player->GetSession()->GetAccountId();
@@ -87,7 +87,7 @@ void AnnounceLoggingToWorld(Player* player, uint8 type)
 
 		if (PlayerLogInVip <= ItrVip) // if target is same as or higher. won't announce to lower vip's.
 		{
-			std::string msg = "[" + green + "VIP" + ConvertNumberToString(PlayerLogInVip) + "|r]:";
+			std::string msg = "[" + green + "VIP" + sVIP->ConvertNumberToString(PlayerLogInVip) + "|r]:";
 			msg = msg + pName + green + " has logged";
 
 			if (type == 0) { msg = msg + " out.|r"; };
@@ -383,12 +383,12 @@ public: Grumboz_VIP_Player_Engine() : PlayerScript("Grumboz_VIP_Player_Engine"){
 
 	virtual void OnLogout(Player* player)
 	{
-		AnnounceLoggingToWorld(player, 0);
+		sVIP->AnnounceLoggingToWorld(player, 0);
 	}
 
 	virtual void OnLogin(Player* player, bool firstLogin)
 	{
-		AnnounceLoggingToWorld(player, 1);
+		sVIP->AnnounceLoggingToWorld(player, 1);
 
 		uint32 guid = player->GetGUID();
 		uint32 acct_id = player->GetSession()->GetAccountId();
@@ -844,8 +844,8 @@ public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER"){ }
 			std::string currency_inBank;
 			std::string deposit_amt;
 
-			if (pMg == 1){ deposit_amt = "Total:" + ConvertNumberToString(pMg) + " " + itemName; };
-			if (pMg == 0 || pMg > 1){ deposit_amt = "Total:" + ConvertNumberToString(pMg) + " " + itemName + "'s"; };
+			if (pMg == 1){ deposit_amt = "Total:" + sVIP->ConvertNumberToString(pMg) + " " + itemName; };
+			if (pMg == 0 || pMg > 1){ deposit_amt = "Total:" + sVIP->ConvertNumberToString(pMg) + " " + itemName + "'s"; };
 
 			std::string withdraw10 = "Withdraw 10 " + itemName + "'s. Fee:0 " + itemName + "'s.";
 			std::string withdraw100 = "Withdraw 100 " + itemName + "'s. Fee:1 " + itemName + ".";
@@ -854,14 +854,14 @@ public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER"){ }
 			std::string withdraw100000 = "Withdraw 100,000 " + itemName + "'s. Fee:1,000 " + itemName + "'s.";
 
 			if (MG == 1)
-				currency_inBank = "Balance:" + ConvertNumberToString(MG) + " " + itemName;
+				currency_inBank = "Balance:" + sVIP->ConvertNumberToString(MG) + " " + itemName;
 			else
 			{
-				currency_inBank = "Balance:" + ConvertNumberToString(MG) + " " + itemName + "'s.";
+				currency_inBank = "Balance:" + sVIP->ConvertNumberToString(MG) + " " + itemName + "'s.";
 			};
 
-			std::string current_VOTES = "Votes:" + ConvertNumberToString(pVotes);
-			std::string current_VIP = "VIP:" + ConvertNumberToString(pVIP);
+			std::string current_VOTES = "Votes:" + sVIP->ConvertNumberToString(pVotes);
+			std::string current_VIP = "VIP:" + sVIP->ConvertNumberToString(pVIP);
 
 			if (pMg > 0)
 			{
