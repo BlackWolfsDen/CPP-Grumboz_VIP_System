@@ -57,7 +57,7 @@ VIP* VIP::instance()
 	return &instance;
 }
 
-std::string ConvertNumberToString(uint64 numberX)
+std::string VIP::ConvertNumberToString(uint64 numberX)
 {
 	auto number = numberX;
 	std::stringstream convert;
