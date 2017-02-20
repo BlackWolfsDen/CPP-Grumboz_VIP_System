@@ -1,0 +1,35 @@
+src/server/game/Entities/Player/Player.cpp 
+
+find void Player::CheckAreaExploreAndOutdoor()
+line 6864
+
+add at the top:
+[CODE]
+	float VIP_OFFSET = sVIP->GetVIPOFFSET();
+	uint32 acctId = GetSession()->GetAccountId();
+	uint8 Pvip = sVIP->GetPlayerVIP(acctId);
+	float MOD = (Pvip * VIP_OFFSET);
+	float rate = sWorld->getRate(RATE_XP_EXPLORE);
+	float mod_rate = rate + (rate * MOD);
+[/CODE]
+
+then replace the:
+[CODE]
+sWorld->getRate(RATE_XP_EXPLORE)
+[/CODE]
+
+in the XP calculations with
+[CODE]
+mod_rate
+[/CODE]
+
+example:
+Before->
+[CODE]
+	XP = uint32(sObjectMgr->GetBaseXP(getLevel() + 5)*sWorld->getRate(RATE_XP_EXPLORE));
+[/CODE]
+after->
+[CODE]
+	XP = uint32(sObjectMgr->GetBaseXP(getLevel() + 5) * mod_rate);
+[/CODE]
+there should be 3.
