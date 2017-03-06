@@ -669,7 +669,9 @@ public:
 			{
 				player->AddAura(VIPBUFFS[i], player);
 			}
-			player->SetMaxHealth(1);
+
+			// player->SetMaxHealth(1);
+			player->SetHealth(player->GetMaxHealth());
 
 		return true;
 	}
