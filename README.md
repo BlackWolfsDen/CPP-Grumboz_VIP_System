@@ -14,7 +14,7 @@ Don't clone this branch (master). it is outdated and only for show.
 Public Release thread : http://emudevs.com/showthread.php/5291-CPP-Grumbo-z-VIP-System
 
 Branches:
-335.60 02-20-2016
-335.62 01-02-2016
-335.63 04-18-2017
+[*] 335.60 02-20-2016
+[*] 335.62 01-02-2016
+[*] 335.63 04-18-2017
 
