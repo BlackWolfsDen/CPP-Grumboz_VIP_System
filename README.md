@@ -10,8 +10,7 @@ Select the proper branch for your TDB rev.
 
 Don't clone this branch (master). it is outdated and only for show. 
 
-
-Public Release thread : http://emudevs.com/showthread.php/5291-CPP-Grumbo-z-VIP-System
+Public Release thread https://community.trinitycore.org/topic/13365-cpp-grumboz-vip-engine/
 
 Branches:
 * 335.60 02-20-2016
