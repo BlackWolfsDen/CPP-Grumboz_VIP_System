@@ -4,16 +4,23 @@
 #include "AccountMgr.h"
 #include "chat.h"
 #include "Config.h"
+#include "DatabaseEnv.h"
 #include "Group.h"
 #include "Grumboz_VIP_Core.h"
 #include "Language.h"
+#include "Log.h"
 #include "ObjectMgr.h"
 #include "player.h"
+#include "QueryResult.h"
 #include "RBAC.h"
+#include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
 #include "ScriptMgr.h"
+#include "Transaction.h"
 #include <unordered_map>
 #include "World.h"
+#include"WorldSession.h"
+
 
 // color definitions since i hate yellow..
 std::string green = "|cff00cc00";
@@ -70,6 +77,8 @@ std::string ConvertNumberToString(uint64 numberX)
 
 void AnnounceLoggingToWorld(Player* player, uint8 type)
 {
+	WorldSession* session = player->GetSession();
+	
 	std::string pName = player->GetName();
 	uint32 acct_id = player->GetSession()->GetAccountId();
 	uint8 PlayerLogInVip = sVIP->GetPlayerVIP(acct_id);
@@ -669,10 +678,8 @@ public:
 			{
 				player->AddAura(VIPBUFFS[i], player);
 			}
-
 			// player->SetMaxHealth(1);
 			player->SetHealth(player->GetMaxHealth());
-
 		return true;
 	}
 
@@ -829,174 +836,186 @@ public: VIP_Stone_Script() : ItemScript("VIP_Stone_Script"){ };
 
 class VIP_MG_BANKER : public CreatureScript
 {
-public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER"){ }
+public: VIP_MG_BANKER() : CreatureScript("VIP_MG_BANKER") {}
 
-		bool OnGossipHello(Player* player, Creature* creature)
+		class VIP_MG_BANKERAI : public ScriptedAI
 		{
+		public:
+			VIP_MG_BANKERAI(Creature* creature) : ScriptedAI(creature) {}
 
-			uint32 accountId = player->GetSession()->GetAccountId();
-			uint8 pVIP = sVIP->GetPlayerVIP(accountId);
-			uint32 MG = sVIP->GetPlayerMG(accountId);
-			uint32 itemId = sVIP->GetVIPMGID();
-			uint32 pMg = player->GetItemCount(itemId);
-			uint32 pVotes = sVIP->GetPlayerVOTES(accountId);
-			std::string itemName = sObjectMgr->GetItemTemplate(itemId)->Name1;
-			std::string currency_inBank;
-			std::string deposit_amt;
-
-			if (pMg == 1){ deposit_amt = "Total:" + ConvertNumberToString(pMg) + " " + itemName; };
-			if (pMg == 0 || pMg > 1){ deposit_amt = "Total:" + ConvertNumberToString(pMg) + " " + itemName + "'s"; };
-
-			std::string withdraw10 = "Withdraw 10 " + itemName + "'s. Fee:0 " + itemName + "'s.";
-			std::string withdraw100 = "Withdraw 100 " + itemName + "'s. Fee:1 " + itemName + ".";
-			std::string withdraw1000 = "Withdraw 1,000 " + itemName + "'s. Fee:10 " + itemName + "'s.";
-			std::string withdraw10000 = "Withdraw 10,000 " + itemName + "'s. Fee:100 " + itemName + "'s.";
-			std::string withdraw100000 = "Withdraw 100,000 " + itemName + "'s. Fee:1,000 " + itemName + "'s.";
-
-			if (MG == 1)
-				currency_inBank = "Balance:" + ConvertNumberToString(MG) + " " + itemName;
-			else
+			static bool OnGossipHello(Player* player, Creature* creature)
 			{
-				currency_inBank = "Balance:" + ConvertNumberToString(MG) + " " + itemName + "'s.";
-			};
 
-			std::string current_VOTES = "Votes:" + ConvertNumberToString(pVotes);
-			std::string current_VIP = "VIP:" + ConvertNumberToString(pVIP);
+				ClearGossipMenuFor(player);
 
-			if (pMg > 0)
-			{
-				player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, "-Deposit-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, "Deposit all my custom currency.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2001);
-				player->ADD_GOSSIP_ITEM(10, deposit_amt.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2001);
-				player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			}
+				uint32 accountId = player->GetSession()->GetAccountId();
+				uint8 pVIP = sVIP->GetPlayerVIP(accountId);
+				uint32 MG = sVIP->GetPlayerMG(accountId);
+				uint32 itemId = sVIP->GetVIPMGID();
+				uint32 pMg = player->GetItemCount(itemId);
+				uint32 pVotes = sVIP->GetPlayerVOTES(accountId);
+				std::string itemName = sObjectMgr->GetItemTemplate(itemId)->Name1;
+				std::string currency_inBank;
+				std::string deposit_amt;
 
-			if (MG >= 10)
-			{
-				player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, "-WithDrawl-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-				player->ADD_GOSSIP_ITEM(10, withdraw10.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2002);
+				if (pMg == 1) { deposit_amt = "Total:" + ConvertNumberToString(pMg) + " " + itemName; };
+				if (pMg == 0 || pMg > 1) { deposit_amt = "Total:" + ConvertNumberToString(pMg) + " " + itemName + "'s"; };
 
-				if (MG >= 101){ player->ADD_GOSSIP_ITEM(10, withdraw100.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2003); };
-				if (MG >= 1010){ player->ADD_GOSSIP_ITEM(10, withdraw1000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2004); };
-				if (MG >= 10100){ player->ADD_GOSSIP_ITEM(10, withdraw10000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2005); };
-				if (MG >= 101000){ player->ADD_GOSSIP_ITEM(10, withdraw100000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2006); };
-			}
+				std::string withdraw10 = "Withdraw 10 " + itemName + "'s. Fee:0 " + itemName + "'s.";
+				std::string withdraw100 = "Withdraw 100 " + itemName + "'s. Fee:1 " + itemName + ".";
+				std::string withdraw1000 = "Withdraw 1,000 " + itemName + "'s. Fee:10 " + itemName + "'s.";
+				std::string withdraw10000 = "Withdraw 10,000 " + itemName + "'s. Fee:100 " + itemName + "'s.";
+				std::string withdraw100000 = "Withdraw 100,000 " + itemName + "'s. Fee:1,000 " + itemName + "'s.";
 
-			player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, "-Bank Balance-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, currency_inBank.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, current_VOTES.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, current_VIP.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-			player->ADD_GOSSIP_ITEM(10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
-
-			player->SEND_GOSSIP_MENU(1, creature->GetGUID());
-
-			return true;
-		};
-
-		bool OnGossipSelect(Player* player, Creature* creature, uint32 /* sender */, uint32 actions)
-		{
-			TC_LOG_INFO("server.loading", "MG_BANKER::OnSelect :%u", actions);
-
-			uint32 accountId = player->GetSession()->GetAccountId();
-			uint8 pVIP = sVIP->GetPlayerVIP(accountId);
-			uint32 MG = sVIP->GetPlayerMG(accountId);
-			uint32 itemId = sVIP->GetVIPMGID();
-			uint32 pMg = player->GetItemCount(itemId);
-			uint32 pVotes = sVIP->GetPlayerVOTES(accountId);
-
-			switch (actions)
-			{
-			case GOSSIP_ACTION_INFO_DEF + 2000: // loopbacks
-
-				player->PlayerTalkClass->ClearMenus();
-				player->CLOSE_GOSSIP_MENU();
-
-				OnGossipHello(player, creature);
-				break;
-
-			case GOSSIP_ACTION_INFO_DEF + 2001: // Deposit all
-
-				player->DestroyItemCount(itemId, pMg, true);
-
-				if (player->GetItemCount(itemId) == 0)
+				if (MG == 1)
+					currency_inBank = "Balance:" + ConvertNumberToString(MG) + " " + itemName;
+				else
 				{
-					sVIP->SetPlayerMG(accountId, MG + pMg);
-
+					currency_inBank = "Balance:" + ConvertNumberToString(MG) + " " + itemName + "'s.";
 				};
 
-				player->PlayerTalkClass->ClearMenus();
-				player->CLOSE_GOSSIP_MENU();
+				std::string current_VOTES = "Votes:" + ConvertNumberToString(pVotes);
+				std::string current_VIP = "VIP:" + ConvertNumberToString(pVIP);
 
-				OnGossipHello(player, creature);
-				break;
-
-			case GOSSIP_ACTION_INFO_DEF + 2002: // Withdraw 10
-
-				player->PlayerTalkClass->ClearMenus();
-
-				if (player->AddItem(itemId, 10))
+				if (pMg > 0)
 				{
-					sVIP->SetPlayerMG(accountId, MG - 10);
-					player->CLOSE_GOSSIP_MENU();
-				}
-				break;
-
-			case GOSSIP_ACTION_INFO_DEF + 2003: // Withdraw 100
-
-				player->PlayerTalkClass->ClearMenus();
-
-				if (player->AddItem(itemId, 100))
-				{
-					sVIP->SetPlayerMG(accountId, MG - 101);
-					player->CLOSE_GOSSIP_MENU();
+					AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+					AddGossipItemFor(player, 10, "-Deposit-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+					AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+					AddGossipItemFor(player, 10, "Deposit all my custom currency.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2001);
+					AddGossipItemFor(player, 10, deposit_amt.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2001);
+					AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
 				}
 
-				OnGossipHello(player, creature);
-				break;
-
-			case GOSSIP_ACTION_INFO_DEF + 2004: // Withdraw 1,000
-				player->PlayerTalkClass->ClearMenus();
-
-				if (player->AddItem(itemId, 1000))
+				if (MG >= 10)
 				{
-					sVIP->SetPlayerMG(accountId, MG - 1010);
-					player->CLOSE_GOSSIP_MENU();
+					AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+					AddGossipItemFor(player, 10, "-WithDrawl-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+					AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+					AddGossipItemFor(player, 10, withdraw10.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2002);
+
+					if (MG >= 101) { AddGossipItemFor(player, 10, withdraw100.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2003); };
+					if (MG >= 1010) { AddGossipItemFor(player, 10, withdraw1000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2004); };
+					if (MG >= 10100) { AddGossipItemFor(player, 10, withdraw10000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2005); };
+					if (MG >= 101000) { AddGossipItemFor(player, 10, withdraw100000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2006); };
 				}
 
-				OnGossipHello(player, creature);
-				break;
+				AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+				AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+				AddGossipItemFor(player, 10, "-Bank Balance-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+				AddGossipItemFor(player, 10, currency_inBank.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+				AddGossipItemFor(player, 10, current_VOTES.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+				AddGossipItemFor(player, 10, current_VIP.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+				AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
 
-			case GOSSIP_ACTION_INFO_DEF + 2005: // Withdraw 10,000
-				player->PlayerTalkClass->ClearMenus();
+				SendGossipMenuFor(player, 1, creature->GetGUID());
 
-				if (player->AddItem(itemId, 10000))
+				return true;
+			};
+
+			static bool OnGossipSelect(Player* player, Creature* creature, uint32 /* sender */, uint32 actions)
+			{
+				TC_LOG_INFO("server.loading", "MG_BANKER::OnSelect :%u", actions);
+
+				uint32 accountId = player->GetSession()->GetAccountId();
+				uint8 pVIP = sVIP->GetPlayerVIP(accountId);
+				uint32 MG = sVIP->GetPlayerMG(accountId);
+				uint32 itemId = sVIP->GetVIPMGID();
+				uint32 pMg = player->GetItemCount(itemId);
+				uint32 pVotes = sVIP->GetPlayerVOTES(accountId);
+
+				switch (actions)
 				{
-					sVIP->SetPlayerMG(accountId, MG - 10100);
-					player->CLOSE_GOSSIP_MENU();
+				case GOSSIP_ACTION_INFO_DEF + 2000: // loopbacks
+
+					player->PlayerTalkClass->ClearMenus();
+					// player->CLOSE_GOSSIP_MENU();
+
+					OnGossipHello(player, creature);
+					break;
+
+				case GOSSIP_ACTION_INFO_DEF + 2001: // Deposit all
+
+					player->DestroyItemCount(itemId, pMg, true);
+
+					if (player->GetItemCount(itemId) == 0)
+					{
+						sVIP->SetPlayerMG(accountId, MG + pMg);
+
+					};
+
+					player->PlayerTalkClass->ClearMenus();
+					// player->CLOSE_GOSSIP_MENU();
+
+					OnGossipHello(player, creature);
+					break;
+
+				case GOSSIP_ACTION_INFO_DEF + 2002: // Withdraw 10
+
+					player->PlayerTalkClass->ClearMenus();
+
+					if (player->AddItem(itemId, 10))
+					{
+						sVIP->SetPlayerMG(accountId, MG - 10);
+						// player->CLOSE_GOSSIP_MENU();
+					}
+					break;
+
+				case GOSSIP_ACTION_INFO_DEF + 2003: // Withdraw 100
+
+					player->PlayerTalkClass->ClearMenus();
+
+					if (player->AddItem(itemId, 100))
+					{
+						sVIP->SetPlayerMG(accountId, MG - 101);
+						// player->CLOSE_GOSSIP_MENU();
+					}
+
+					OnGossipHello(player, creature);
+					break;
+
+				case GOSSIP_ACTION_INFO_DEF + 2004: // Withdraw 1,000
+					player->PlayerTalkClass->ClearMenus();
+
+					if (player->AddItem(itemId, 1000))
+					{
+						sVIP->SetPlayerMG(accountId, MG - 1010);
+						// player->CLOSE_GOSSIP_MENU();
+					}
+
+					OnGossipHello(player, creature);
+					break;
+
+				case GOSSIP_ACTION_INFO_DEF + 2005: // Withdraw 10,000
+					player->PlayerTalkClass->ClearMenus();
+
+					if (player->AddItem(itemId, 10000))
+					{
+						sVIP->SetPlayerMG(accountId, MG - 10100);
+						// player->CLOSE_GOSSIP_MENU();
+					}
+
+					OnGossipHello(player, creature);
+					break;
+
+				case GOSSIP_ACTION_INFO_DEF + 2006: // Withdraw 100,000
+					player->PlayerTalkClass->ClearMenus();
+
+					if (player->AddItem(itemId, 100000))
+					{
+						sVIP->SetPlayerMG(accountId, MG - 101000);
+						// player->CLOSE_GOSSIP_MENU();
+					}
+
+					OnGossipHello(player, creature);
+					break;
 				}
-
-				OnGossipHello(player, creature);
-				break;
-
-			case GOSSIP_ACTION_INFO_DEF + 2006: // Withdraw 100,000
-				player->PlayerTalkClass->ClearMenus();
-
-				if (player->AddItem(itemId, 100000))
-				{
-					sVIP->SetPlayerMG(accountId, MG - 101000);
-					player->CLOSE_GOSSIP_MENU();
-				}
-
-				OnGossipHello(player, creature);
-				break;
+				return true;
 			}
-			return true;
+		};
+		CreatureAI* GetAI(Creature* creature) const override
+		{
+			return new VIP_MG_BANKERAI(creature);
 		}
 };
 
