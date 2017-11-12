@@ -9,7 +9,9 @@
 #include "Grumboz_VIP_Core.h"
 #include "Language.h"
 #include "Log.h"
+#include "MotionMaster.h"
 #include "ObjectMgr.h"
+#include "ObjectAccessor.h"
 #include "player.h"
 #include "QueryResult.h"
 #include "RBAC.h"
@@ -78,7 +80,7 @@ std::string ConvertNumberToString(uint64 numberX)
 void AnnounceLoggingToWorld(Player* player, uint8 type)
 {
 	WorldSession* session = player->GetSession();
-	
+
 	std::string pName = player->GetName();
 	uint32 acct_id = player->GetSession()->GetAccountId();
 	uint8 PlayerLogInVip = sVIP->GetPlayerVIP(acct_id);
@@ -100,158 +102,158 @@ void AnnounceLoggingToWorld(Player* player, uint8 type)
 			if (type == 0) { msg = msg + " out.|r"; };
 			if (type == 1) { msg = msg + " in.|r"; };
 
-			if (itr->second->GetPlayer()){ ChatHandler(itr->second->GetPlayer()->GetSession()).PSendSysMessage(msg.c_str()); };
+			if (itr->second->GetPlayer()) { ChatHandler(itr->second->GetPlayer()->GetSession()).PSendSysMessage(msg.c_str()); };
 		}
 	}
 };
 
 class VIP_Load_Conf : public WorldScript
 {
-public: VIP_Load_Conf() : WorldScript("VIP_Load_Conf"){ };
+public: VIP_Load_Conf() : WorldScript("VIP_Load_Conf") { };
 
-	virtual void OnConfigLoad(bool /*reload*/)
-	{
-		TC_LOG_INFO("server.loading", "___________________________________");
-		TC_LOG_INFO("server.loading", "| Grumbo'z  VIP  Engine : Loading |");
-		TC_LOG_INFO("server.loading", "|__________By_Slp13at420__________|");
-		TC_LOG_INFO("server.loading", "|_________of__EmuDevs.com_________|");
-		TC_LOG_INFO("server.loading", "|-                               -|");
-		TC_LOG_INFO("server.loading", "|____________Ver:%.2f_____________|", ver);
-
-		QueryResult VIPItemQery = WorldDatabase.PQuery("SELECT entry, vip FROM item_template;");
-
-		if (VIPItemQery)
+		virtual void OnConfigLoad(bool /*reload*/)
 		{
-			do
+			TC_LOG_INFO("server.loading", "___________________________________");
+			TC_LOG_INFO("server.loading", "| Grumbo'z  VIP  Engine : Loading |");
+			TC_LOG_INFO("server.loading", "|__________By_Slp13at420__________|");
+			TC_LOG_INFO("server.loading", "|_________of__EmuDevs.com_________|");
+			TC_LOG_INFO("server.loading", "|-                               -|");
+			TC_LOG_INFO("server.loading", "|____________Ver:%.2f_____________|", ver);
+
+			QueryResult VIPItemQery = WorldDatabase.PQuery("SELECT entry, vip FROM item_template;");
+
+			if (VIPItemQery)
 			{
-				Field* fields = VIPItemQery->Fetch();
-				uint32 item_id = fields[0].GetUInt32();
-				uint32 vip = fields[1].GetUInt8();
+				do
+				{
+					Field* fields = VIPItemQery->Fetch();
+					uint32 item_id = fields[0].GetUInt32();
+					uint32 vip = fields[1].GetUInt8();
 
-				ItemVIP& data1 = sVIP->ItemVip[item_id];
-				// Save the DB values to the MyData object
-				data1.item_id = item_id;
-				data1.vip = vip;
+					ItemVIP& data1 = sVIP->ItemVip[item_id];
+					// Save the DB values to the MyData object
+					data1.item_id = item_id;
+					data1.vip = vip;
 
-			} while(VIPItemQery->NextRow());
-		}
-		
-		QueryResult VIPCreatureQery = WorldDatabase.PQuery("SELECT entry, vip, mg FROM creature_template;");
+				} while (VIPItemQery->NextRow());
+			}
 
-		if (VIPCreatureQery)
-		{
-			do
+			QueryResult VIPCreatureQery = WorldDatabase.PQuery("SELECT entry, vip, mg FROM creature_template;");
+
+			if (VIPCreatureQery)
 			{
-				Field* fields = VIPCreatureQery->Fetch();
-				uint32 entry_id = fields[0].GetUInt32();
-				uint32 vip = fields[1].GetUInt8();
-				uint32 mg = fields[2].GetUInt32();
+				do
+				{
+					Field* fields = VIPCreatureQery->Fetch();
+					uint32 entry_id = fields[0].GetUInt32();
+					uint32 vip = fields[1].GetUInt8();
+					uint32 mg = fields[2].GetUInt32();
 
-				CreatureVIP& data2 = sVIP->CKR[entry_id];
-				// Save the DB values to the MyData object
-				data2.vip = vip;
-				data2.mg = mg;
+					CreatureVIP& data2 = sVIP->CKR[entry_id];
+					// Save the DB values to the MyData object
+					data2.vip = vip;
+					data2.mg = mg;
 
-			} while (VIPCreatureQery->NextRow());
-		}
-		
-		QueryResult gpsQery = WorldDatabase.PQuery("SELECT * FROM hearthstone;");
+				} while (VIPCreatureQery->NextRow());
+			}
 
-		if (gpsQery)
-		{
-			do
+			QueryResult gpsQery = WorldDatabase.PQuery("SELECT * FROM hearthstone;");
+
+			if (gpsQery)
 			{
-				// unpacks the results of `result` into fields and appoint data to variable.
-				Field* fields = gpsQery->Fetch();
-				uint32 guid = fields[0].GetUInt32();
-				uint32 map_id = fields[1].GetUInt32();
-				float x = fields[2].GetFloat();
-				float y = fields[3].GetFloat();
-				float z = fields[4].GetFloat();
-				float o = fields[5].GetFloat();
+				do
+				{
+					// unpacks the results of `result` into fields and appoint data to variable.
+					Field* fields = gpsQery->Fetch();
+					uint32 guid = fields[0].GetUInt32();
+					uint32 map_id = fields[1].GetUInt32();
+					float x = fields[2].GetFloat();
+					float y = fields[3].GetFloat();
+					float z = fields[4].GetFloat();
+					float o = fields[5].GetFloat();
 
-				VipHearthStoneGPS& data3 = sVIP->HearthStone[guid];
-				// Save the DB values to the MyData object
-				data3.guid = guid;
-				data3.map_id = map_id;
-				data3.x = x;
-				data3.y = y;
-				data3.z = z;
-				data3.o = o;
+					VipHearthStoneGPS& data3 = sVIP->HearthStone[guid];
+					// Save the DB values to the MyData object
+					data3.guid = guid;
+					data3.map_id = map_id;
+					data3.x = x;
+					data3.y = y;
+					data3.z = z;
+					data3.o = o;
 
-			} while (gpsQery->NextRow());
+				} while (gpsQery->NextRow());
+			}
+
+			VipMallGPS& data4 = sVIP->MALL[0];
+			// Save the DB values to the MyData object
+			data4.map_id = 530;
+			data4.x = -1800.3104f;
+			data4.y = 5315.0424f;
+			data4.z = -12.4276f;
+			data4.o = 2.1062f;
+
+			VipMallGPS& data5 = sVIP->MALL[1]; // like Lua table VIP[acctId].vip
+											   // Save the DB values to the MyData object
+			data5.map_id = 530;
+			data5.x = -1921.8005f;
+			data5.y = 5546.6264f;
+			data5.z = -12.4278f;
+			data5.o = 5.2321f;
+
+			VipHomeGPS& data6 = sVIP->HOME[0]; // like Lua table VIP[acctId].vip
+											   // Save the DB values to the MyData object
+			data6.map_id = 0;
+			data6.x = -4906.3911f;
+			data6.y = -970.9063f;
+			data6.z = 501.4540f;
+			data6.o = 2.3338f;
+
+			VipHomeGPS& data7 = sVIP->HOME[1]; // like Lua table VIP[acctId].vip
+											   // Save the DB values to the MyData object
+			data7.map_id = 1;
+			data7.x = 1604.4882f;
+			data7.y = -4394.3603f;
+			data7.z = 9.9671f;
+			data7.o = 3.5517f;
+
+			TC_LOG_INFO("server.loading", "|   VIP Teleport GPS's : Loaded    ");
+
+			sVIP->SetVIPMAX(sConfigMgr->GetIntDefault("VIP.MAX", 6));
+			sVIP->SetVIPVOTE_ENABLE(sConfigMgr->GetBoolDefault("VIP.VOTE_ENABLE", true));
+			sVIP->SetVIPVOTECOUNT(sConfigMgr->GetIntDefault("VIP.VOTE_COUNT", 125));
+			sVIP->SetVIPCOINID(sConfigMgr->GetIntDefault("VIP.COIN", 63020));
+			sVIP->SetVIPSTONEID(sConfigMgr->GetIntDefault("VIP.STONE", 63021));
+			sVIP->SetVIPMGID(sConfigMgr->GetIntDefault("VIP.MAGIC_GOLD", 44209));
+			sVIP->SetVIPOFFSET(sConfigMgr->GetFloatDefault("VIP.OFFSET", 0.05f));
+			sVIP->SetTALENTBONUS(sConfigMgr->GetIntDefault("VIP.TP_BONUS", 14));
+			sVIP->SetLEVELBONUS_ENABLE(sConfigMgr->GetBoolDefault("VIP.LEVEL_BONUS_ENABLE", true));
+			sVIP->SetLEVELBONUS(sConfigMgr->GetIntDefault("VIP.LEVEL_BONUS", 1));
+
+			TC_LOG_INFO("server.loading", "|  VIP MAX_VIP : %u", sVIP->GetVIPMAX());
+
+			if (sVIP->GetVIPVOTE_ENABLE())
+			{
+				TC_LOG_INFO("server.loading", "|  VIP VOTES : ENABLED             ");
+			}
+
+			TC_LOG_INFO("server.loading", "|  VIP TP BONUS : %u", sVIP->GetVIPVOTECOUNT());
+
+			if (sVIP->GetLEVELBONUS_ENABLE())
+			{
+				TC_LOG_INFO("server.loading", "|  VIP LEVEL BONUS : ENABLED       ");
+				TC_LOG_INFO("server.loading", "|  VIP LEVEL BONUS : %u", sVIP->GetLEVELBONUS());
+				TC_LOG_INFO("server.loading", "|  VIP offset : %.2f", sVIP->GetVIPOFFSET());
+			}
+
+			if (!sObjectMgr->GetItemTemplate(sVIP->GetVIPCOINID())) { TC_LOG_INFO("server.loading", "! VIP COIN %u MISSING FROM DB ! SERVER CRASHING !", sVIP->GetVIPCOINID()); };
+
+			sVIP->SetVIP_COIN_NAME(sObjectMgr->GetItemTemplate(sVIP->GetVIPCOINID())->Name1);
+
+			TC_LOG_INFO("server.loading", "___________________________________");
+			TC_LOG_INFO("server.loading", "|  VIP Config : Loaded            |");
+			TC_LOG_INFO("server.loading", "|  Grumbo'z VIP Engine : Loaded   |");
+			TC_LOG_INFO("server.loading", "|_________________________________|");
 		}
-
-		VipMallGPS& data4 = sVIP->MALL[0];
-		// Save the DB values to the MyData object
-		data4.map_id = 530;
-		data4.x = -1800.3104f;
-		data4.y = 5315.0424f;
-		data4.z = -12.4276f;
-		data4.o = 2.1062f;
-
-		VipMallGPS& data5 = sVIP->MALL[1]; // like Lua table VIP[acctId].vip
-		// Save the DB values to the MyData object
-		data5.map_id = 530;
-		data5.x = -1921.8005f;
-		data5.y = 5546.6264f;
-		data5.z = -12.4278f;
-		data5.o = 5.2321f;
-
-		VipHomeGPS& data6 = sVIP->HOME[0]; // like Lua table VIP[acctId].vip
-		// Save the DB values to the MyData object
-		data6.map_id = 0;
-		data6.x = -4906.3911f;
-		data6.y = -970.9063f;
-		data6.z = 501.4540f;
-		data6.o = 2.3338f;
-
-		VipHomeGPS& data7 = sVIP->HOME[1]; // like Lua table VIP[acctId].vip
-		// Save the DB values to the MyData object
-		data7.map_id = 1;
-		data7.x = 1604.4882f;
-		data7.y = -4394.3603f;
-		data7.z = 9.9671f;
-		data7.o = 3.5517f;
-
-		TC_LOG_INFO("server.loading", "|   VIP Teleport GPS's : Loaded    ");
-		
-		sVIP->SetVIPMAX(sConfigMgr->GetIntDefault("VIP.MAX", 6));
-		sVIP->SetVIPVOTE_ENABLE(sConfigMgr->GetBoolDefault("VIP.VOTE_ENABLE", true));
-		sVIP->SetVIPVOTECOUNT(sConfigMgr->GetIntDefault("VIP.VOTE_COUNT", 125));
-		sVIP->SetVIPCOINID(sConfigMgr->GetIntDefault("VIP.COIN", 63020));
-		sVIP->SetVIPSTONEID(sConfigMgr->GetIntDefault("VIP.STONE", 63021));
-		sVIP->SetVIPMGID(sConfigMgr->GetIntDefault("VIP.MAGIC_GOLD", 44209));
-		sVIP->SetVIPOFFSET(sConfigMgr->GetFloatDefault("VIP.OFFSET", 0.05f));
-		sVIP->SetTALENTBONUS(sConfigMgr->GetIntDefault("VIP.TP_BONUS", 14));
-		sVIP->SetLEVELBONUS_ENABLE(sConfigMgr->GetBoolDefault("VIP.LEVEL_BONUS_ENABLE", true));
-		sVIP->SetLEVELBONUS(sConfigMgr->GetIntDefault("VIP.LEVEL_BONUS", 1));
-
-		TC_LOG_INFO("server.loading", "|  VIP MAX_VIP : %u", sVIP->GetVIPMAX());
-
-		if (sVIP->GetVIPVOTE_ENABLE())
-		{
-			TC_LOG_INFO("server.loading", "|  VIP VOTES : ENABLED             ");
-		}
-
-		TC_LOG_INFO("server.loading", "|  VIP TP BONUS : %u", sVIP->GetVIPVOTECOUNT());
-
-		if (sVIP->GetLEVELBONUS_ENABLE())
-		{ 
-			TC_LOG_INFO("server.loading", "|  VIP LEVEL BONUS : ENABLED       ");
-			TC_LOG_INFO("server.loading", "|  VIP LEVEL BONUS : %u", sVIP->GetLEVELBONUS());
-			TC_LOG_INFO("server.loading", "|  VIP offset : %.2f", sVIP->GetVIPOFFSET());
-		}
-
-		if (!sObjectMgr->GetItemTemplate(sVIP->GetVIPCOINID())){ TC_LOG_INFO("server.loading", "! VIP COIN %u MISSING FROM DB ! SERVER CRASHING !", sVIP->GetVIPCOINID()); };
-
-		sVIP->SetVIP_COIN_NAME(sObjectMgr->GetItemTemplate(sVIP->GetVIPCOINID())->Name1);
-
-		TC_LOG_INFO("server.loading", "___________________________________");
-		TC_LOG_INFO("server.loading", "|  VIP Config : Loaded            |");
-		TC_LOG_INFO("server.loading", "|  Grumbo'z VIP Engine : Loaded   |");
-		TC_LOG_INFO("server.loading", "|_________________________________|");
-	}
 };
 
 void VIP::SetHearthStone(uint32 guid, uint32 map_id, float x, float y, float z, float o)
@@ -291,7 +293,7 @@ void VIP::SetPlayerVIP(uint32 acct_id, uint8 pvip)
 	}
 
 	sVIP->Vip[acct_id].vip = pvip;
-	
+
 	LoginDatabase.PExecute("UPDATE account SET `vip`='%u' WHERE `id`='%u';", sVIP->Vip[acct_id].vip, acct_id);
 }
 
@@ -342,7 +344,7 @@ void VIP::SetCreatureMG(uint32 creature_id, uint8 creature_mg)
 
 class Grumboz_VIP_Account_Engine : public AccountScript
 {
-public: Grumboz_VIP_Account_Engine() : AccountScript("Grumboz_VIP_Account_Engine"){ };
+public: Grumboz_VIP_Account_Engine() : AccountScript("Grumboz_VIP_Account_Engine") { };
 
 		virtual void OnAccountLogout(uint32 accountId)
 		{
@@ -371,7 +373,7 @@ public: Grumboz_VIP_Account_Engine() : AccountScript("Grumboz_VIP_Account_Engine
 					uint32 pvotes = fields[2].GetUInt32();
 
 					VipElements& data = sVIP->Vip[accountId]; // like Lua table VIP[acctId].vip
-					// Save the DB values to the MyData object
+															  // Save the DB values to the MyData object
 					data.vip = pvip;
 					data.mg = pmg;
 					data.votes = pvotes;
@@ -386,102 +388,102 @@ public: Grumboz_VIP_Account_Engine() : AccountScript("Grumboz_VIP_Account_Engine
 
 class Grumboz_VIP_Player_Engine : public PlayerScript
 {
-public: Grumboz_VIP_Player_Engine() : PlayerScript("Grumboz_VIP_Player_Engine"){ };
+public: Grumboz_VIP_Player_Engine() : PlayerScript("Grumboz_VIP_Player_Engine") { };
 
-	virtual void OnLogout(Player* player)
-	{
-		AnnounceLoggingToWorld(player, 0);
-	}
-
-	virtual void OnLogin(Player* player, bool firstLogin)
-	{
-		AnnounceLoggingToWorld(player, 1);
-
-		uint32 guid = player->GetGUID();
-		uint32 acct_id = player->GetSession()->GetAccountId();
-		uint8 Pvip = sVIP->GetPlayerVIP(acct_id);
-		bool lvl_enable = sVIP->GetLEVELBONUS_ENABLE();
-		uint8 xtra_levels = sVIP->GetLEVELBONUS();
-		uint8 Plvl = player->getLevel();
-		uint32 Php = player->GetHealth();
-		uint8 max_level = sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL);
-
-		uint8 VIP_level_cap = (max_level + (xtra_levels * Pvip)) - xtra_levels; // has to compensate for base VIP 1
-
-		ChatHandler(player->GetSession()).PSendSysMessage("Welcome %s, you are VIP %u.", player->GetName().c_str(), sVIP->Vip[acct_id].vip);
-		ChatHandler(player->GetSession()).PSendSysMessage("%stype `.vip` for a list of VIP commands.", green.c_str());
-
-		if (sVIP->HearthStone[guid].guid != guid)
+		virtual void OnLogout(Player* player)
 		{
-			sVIP->SetHearthStone(guid, player->GetMapId(), player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation());
+			AnnounceLoggingToWorld(player, 0);
 		}
 
-		if (Plvl != VIP_level_cap)
+		virtual void OnLogin(Player* player, bool firstLogin)
 		{
-			if (lvl_enable)
+			AnnounceLoggingToWorld(player, 1);
+
+			uint32 guid = player->GetGUID();
+			uint32 acct_id = player->GetSession()->GetAccountId();
+			uint8 Pvip = sVIP->GetPlayerVIP(acct_id);
+			bool lvl_enable = sVIP->GetLEVELBONUS_ENABLE();
+			uint8 xtra_levels = sVIP->GetLEVELBONUS();
+			uint8 Plvl = player->getLevel();
+			uint32 Php = player->GetHealth();
+			uint8 max_level = sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL);
+
+			uint8 VIP_level_cap = (max_level + (xtra_levels * Pvip)) - xtra_levels; // has to compensate for base VIP 1
+
+			ChatHandler(player->GetSession()).PSendSysMessage("Welcome %s, you are VIP %u.", player->GetName().c_str(), sVIP->Vip[acct_id].vip);
+			ChatHandler(player->GetSession()).PSendSysMessage("%stype `.vip` for a list of VIP commands.", green.c_str());
+
+			if (sVIP->HearthStone[guid].guid != guid)
 			{
-				player->SetLevel(VIP_level_cap);
+				sVIP->SetHearthStone(guid, player->GetMapId(), player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation());
 			}
+
+			if (Plvl != VIP_level_cap)
+			{
+				if (lvl_enable)
+				{
+					player->SetLevel(VIP_level_cap);
+				}
+			}
+
+			player->SetMaxHealth(Php + ((Php * sVIP->GetVIPOFFSET()) * Pvip));
 		}
 
-		player->SetMaxHealth(Php + ((Php * sVIP->GetVIPOFFSET()) * Pvip));
-	}
-
-	virtual void OnCreatureKill(Player* player, Creature* creature)
-	{
-		uint32 itemId = sVIP->GetVIPMGID();
-		uint32 creatureId = creature->GetEntry();
-		uint8 cVip = urand(1, sVIP->GetCreatureVIP(creatureId));
-		uint32 cMg = sVIP->GetCreatureMG(creatureId);
-
-		if (cMg > 0)
+		virtual void OnCreatureKill(Player* player, Creature* creature)
 		{
-			if (player->GetGroup())
+			uint32 itemId = sVIP->GetVIPMGID();
+			uint32 creatureId = creature->GetEntry();
+			uint8 cVip = urand(1, sVIP->GetCreatureVIP(creatureId));
+			uint32 cMg = sVIP->GetCreatureMG(creatureId);
+
+			if (cMg > 0)
 			{
-				Group* group = player->GetGroup();
-
-				Group::MemberSlotList const &members = group->GetMemberSlots();
-
-				for (Group::MemberSlotList::const_iterator itr = members.begin(); itr != members.end(); ++itr)
+				if (player->GetGroup())
 				{
-					Group::MemberSlot const &slot = *itr;
-					Player* player = ObjectAccessor::FindPlayer((*itr).guid);
+					Group* group = player->GetGroup();
 
-					if (player && player->GetSession())
+					Group::MemberSlotList const &members = group->GetMemberSlots();
+
+					for (Group::MemberSlotList::const_iterator itr = members.begin(); itr != members.end(); ++itr)
 					{
-						uint32 accountId = player->GetSession()->GetAccountId();
-						uint32 MG = sVIP->GetPlayerMG(accountId);
-						uint8 pVip = sVIP->GetPlayerVIP(accountId);
+						Group::MemberSlot const &slot = *itr;
+						Player* player = ObjectAccessor::FindPlayer((*itr).guid);
 
-						uint32 reward = (cMg * cVip) * pVip;
-
-						ChatHandler(player->GetSession()).PSendSysMessage("+%u", reward);
-						if (!player->AddItem(itemId, reward))
+						if (player && player->GetSession())
 						{
-							sVIP->SetPlayerMG(accountId, MG + reward);
+							uint32 accountId = player->GetSession()->GetAccountId();
+							uint32 MG = sVIP->GetPlayerMG(accountId);
+							uint8 pVip = sVIP->GetPlayerVIP(accountId);
 
-							ChatHandler(player->GetSession()).PSendSysMessage("Banked.");
+							uint32 reward = (cMg * cVip) * pVip;
+
+							ChatHandler(player->GetSession()).PSendSysMessage("+%u", reward);
+							if (!player->AddItem(itemId, reward))
+							{
+								sVIP->SetPlayerMG(accountId, MG + reward);
+
+								ChatHandler(player->GetSession()).PSendSysMessage("Banked.");
+							}
 						}
 					}
 				}
-			}
-			else
-			{
-				uint32 accountId = player->GetSession()->GetAccountId();
-				uint32 MG = sVIP->GetPlayerMG(accountId);
-				uint8 pVip = sVIP->GetPlayerVIP(accountId);
-
-				uint32 reward = (cMg * cVip) * pVip;
-
-				if (!player->AddItem(itemId, reward))
+				else
 				{
-					sVIP->SetPlayerMG(accountId, MG + reward);
+					uint32 accountId = player->GetSession()->GetAccountId();
+					uint32 MG = sVIP->GetPlayerMG(accountId);
+					uint8 pVip = sVIP->GetPlayerVIP(accountId);
 
-					ChatHandler(player->GetSession()).PSendSysMessage("+%u Banked.", reward);
+					uint32 reward = (cMg * cVip) * pVip;
+
+					if (!player->AddItem(itemId, reward))
+					{
+						sVIP->SetPlayerMG(accountId, MG + reward);
+
+						ChatHandler(player->GetSession()).PSendSysMessage("+%u Banked.", reward);
+					}
 				}
 			}
 		}
-	}
 };
 
 class VIP_commands : public CommandScript
@@ -569,7 +571,7 @@ public:
 		handler->PSendSysMessage("Relog to change faction of your character.");
 		return true;
 	}
-	
+
 	static bool HandleCustomizeCommand(ChatHandler* handler, const char* args)
 	{
 		Player* player = handler->GetSession()->GetPlayer();
@@ -650,8 +652,8 @@ public:
 	{
 		Player* player = handler->GetSession()->GetPlayer();
 
-			if (!*args)
-				return false;
+		if (!*args)
+			return false;
 
 		uint16 display_id = (uint16)atoi((char*)args);
 
@@ -674,12 +676,12 @@ public:
 		uint8 Pvip = sVIP->GetPlayerVIP(acct_id);
 		uint8 max_level = sVIP->GetVIPMAX();
 
-			for (uint8 i = 0; i < (((sizeof(VIPBUFFS) / sizeof(*VIPBUFFS)) / max_level) * Pvip); i++)
-			{
-				player->AddAura(VIPBUFFS[i], player);
-			}
-			// player->SetMaxHealth(1);
-			player->SetHealth(player->GetMaxHealth());
+		for (uint8 i = 0; i < (((sizeof(VIPBUFFS) / sizeof(*VIPBUFFS)) / max_level) * Pvip); i++)
+		{
+			player->AddAura(VIPBUFFS[i], player);
+		}
+		// player->SetMaxHealth(1);
+		player->SetHealth(player->GetMaxHealth());
 		return true;
 	}
 
@@ -758,7 +760,7 @@ public:
 
 class VIP_Coin_Script : public ItemScript
 {
-public: VIP_Coin_Script() : ItemScript("VIP_Coin_Script"){ };
+public: VIP_Coin_Script() : ItemScript("VIP_Coin_Script") { };
 
 		virtual bool OnUse(Player* player, Item* item, SpellCastTargets const& targets)
 		{
@@ -773,8 +775,8 @@ public: VIP_Coin_Script() : ItemScript("VIP_Coin_Script"){ };
 			ChatHandler(player->GetSession()).PSendSysMessage("%sYou are VIP:%s%u%s of %s%u.", green.c_str(), white.c_str(), pVip, green.c_str(), white.c_str(), sVIP->GetVIPMAX());
 			ChatHandler(player->GetSession()).PSendSysMessage("%sYou have %s%u %smg's", green.c_str(), white.c_str(), pMg, green.c_str());
 
-			if (pVotes <= 10){ ChatHandler(player->GetSession()).PSendSysMessage("%sYou have Voted %s%u%s time's.", green.c_str(), white.c_str(), pVotes, green.c_str()); };
-			if (pVotes > 10){ ChatHandler(player->GetSession()).PSendSysMessage("%sThank you for voting %s%u%s time's.", green.c_str(), white.c_str(), pVotes, green.c_str()); };
+			if (pVotes <= 10) { ChatHandler(player->GetSession()).PSendSysMessage("%sYou have Voted %s%u%s time's.", green.c_str(), white.c_str(), pVotes, green.c_str()); };
+			if (pVotes > 10) { ChatHandler(player->GetSession()).PSendSysMessage("%sThank you for voting %s%u%s time's.", green.c_str(), white.c_str(), pVotes, green.c_str()); };
 
 			ChatHandler(player->GetSession()).PSendSysMessage("%sYou recieve a %s%u%s %sstat increase.", green.c_str(), white.c_str(), uint8(sVIP->GetVIPOFFSET() * 100)*pVip, "%", green.c_str());
 
@@ -805,7 +807,7 @@ void RemoveItem(uint32 id, Player* player)
 
 class VIP_Stone_Script : public ItemScript
 {
-public: VIP_Stone_Script() : ItemScript("VIP_Stone_Script"){ };
+public: VIP_Stone_Script() : ItemScript("VIP_Stone_Script") { };
 
 		virtual bool OnUse(Player* player, Item* item, SpellCastTargets const& targets)
 		{
