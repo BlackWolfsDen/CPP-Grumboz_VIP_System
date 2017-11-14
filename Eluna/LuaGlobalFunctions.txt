@@ -67,54 +67,54 @@ ElunaRegister<Creature> CreatureMethods[] =
 GlobalMethods
 
 	// Grumboz VIP Engine player methods
-	int GetVIPMAX(Eluna* /*E*/, lua_State* L)
+	int GetVIPMAX(lua_State* L)
 	{
-		Eluna::Push(L, VIP::GetVIPMAX());
+		Eluna::Push(L, sVIP->GetVIPMAX());
 		return 1;
 	}
-	int GetVIPVOTE_ENABLE(Eluna* /*E*/, lua_State* L)
+	int GetVIPVOTE_ENABLE(lua_State* L)
 	{
-		Eluna::Push(L, VIP::GetVIPVOTE_ENABLE());
+		Eluna::Push(L, sVIP->GetVIPVOTE_ENABLE());
 		return 1;
 	}
-	int GetVIPVOTECOUNT(Eluna* /*E*/, lua_State* L)
+	int GetVIPVOTECOUNT(lua_State* L)
 	{
-		Eluna::Push(L, VIP::GetVIPVOTECOUNT());
+		Eluna::Push(L, sVIP->GetVIPVOTECOUNT());
 		return 1;
 	}
-	int GetVIPCOINID(Eluna* /*E*/, lua_State* L)
+	int GetVIPCOINID(lua_State* L)
 	{
-		Eluna::Push(L, VIP::GetVIPCOINID());
+		Eluna::Push(L, sVIP->GetVIPCOINID());
 		return 1;
 	}
-	int GetVIPSTONEID(Eluna* /*E*/, lua_State* L)
+	int GetVIPSTONEID(lua_State* L)
 	{
-		Eluna::Push(L, VIP::GetVIPSTONEID());
+		Eluna::Push(L, sVIP->GetVIPSTONEID());
 		return 1;
 	}
-	int GetVIPMGID(Eluna* /*E*/, lua_State* L)
+	int GetVIPMGID(lua_State* L)
 	{
-		Eluna::Push(L, VIP::GetVIPMGID());
+		Eluna::Push(L, sVIP->GetVIPMGID());
 		return 1;
 	}
-	int GetVIPOFFSET(Eluna* /*E*/, lua_State* L)
+	int GetVIPOFFSET(lua_State* L)
 	{
-		Eluna::Push(L, VIP::GetVIPOFFSET());
+		Eluna::Push(L, sVIP->GetVIPOFFSET());
 		return 1;
 	}
-	int GetTALENTBONUS(Eluna* /*E*/, lua_State* L)
+	int GetTALENTBONUS(lua_State* L)
 	{
-		Eluna::Push(L, VIP::GetTALENTBONUS());
+		Eluna::Push(L, sVIP->GetTALENTBONUS());
 		return 1;
 	}
-	int GetLEVELBONUS_ENABLE(Eluna* /*E*/, lua_State* L)
+	int GetLEVELBONUS_ENABLE(lua_State* L)
 	{
-		Eluna::Push(L, VIP::GetLEVELBONUS_ENABLE());
+		Eluna::Push(L, sVIP->GetLEVELBONUS_ENABLE());
 		return 1;
 	}
-	int GetLEVELBONUS(Eluna* /*E*/, lua_State* L)
+	int GetLEVELBONUS(lua_State* L)
 	{
-		Eluna::Push(L, VIP::GetLEVELBONUS());
+		Eluna::Push(L, sVIP->GetLEVELBONUS());
 		return 1;
 	}
 
@@ -122,184 +122,150 @@ GlobalMethods
 PlayerMethods
  {
 	// Grumboz VIP Engine player methods
-	int GetPlayerVIP(Eluna* /*E*/, lua_State* L, Player* player)
+	int GetPlayerVIP(lua_State* L, Player* player)
 	{
 		uint32 acctId = player->GetSession()->GetAccountId();
-		Eluna::Push(L, VIP::GetPlayerVIP(acctId));
+		Eluna::Push(L, sVIP->GetPlayerVIP(acctId));
 		return 1;
 	}
-	int GetPlayerMG(Eluna* /*E*/, lua_State* L, Player* player)
+	int GetPlayerMG(lua_State* L, Player* player)
 	{
 		uint32 acctId = player->GetSession()->GetAccountId();
-		Eluna::Push(L, VIP::GetPlayerMG(acctId));
+		Eluna::Push(L, sVIP->GetPlayerMG(acctId));
 		return 1;
 	}
-	int GetPlayerVOTES(Eluna* /*E*/, lua_State* L, Player* player)
+	int GetPlayerVOTES(lua_State* L, Player* player)
 	{
 		uint32 acctId = player->GetSession()->GetAccountId();
-		Eluna::Push(L, VIP::GetPlayerVOTES(acctId));
+		Eluna::Push(L, sVIP->GetPlayerVOTES(acctId));
 		return 1;
 	}
-	int SetPlayerVIP(Eluna* /*E*/, lua_State* L, Player* player)
+	int SetPlayerVIP(lua_State* L, Player* player)
 	{
 		uint32 acctId = player->GetSession()->GetAccountId();
 		uint8 vip = Eluna::CHECKVAL<uint8>(L, 2);
-		VIP::SetPlayerVIP(acctId, vip);
+		sVIP->SetPlayerVIP(acctId, vip);
 		return 0;
 	}
-	int SetPlayerMG(Eluna* /*E*/, lua_State* L, Player* player)
+	int SetPlayerMG(lua_State* L, Player* player)
 	{
 		uint32 acctId = player->GetSession()->GetAccountId();
 		uint32 mg = Eluna::CHECKVAL<uint32>(L, 2);
-		VIP::SetPlayerMG(acctId, mg);
+		sVIP->SetPlayerMG(acctId, mg);
 		return 0;
 	}
-	int SetPlayerVOTES(Eluna* /*E*/, lua_State* L, Player* player)
+	int SetPlayerVOTES(lua_State* L, Player* player)
 	{
 		uint32 acctId = player->GetSession()->GetAccountId();
 		uint32 votes = Eluna::CHECKVAL<uint32>(L, 2);
-		VIP::SetPlayerVOTES(acctId, votes);
+		sVIP->SetPlayerVOTES(acctId, votes);
 		return 0;
 	}
-
-CreatureMethods
- {
-	// Grumboz VIP Engine creature methods
-	int GetCreatureVIP(Eluna* /*E*/, lua_State* L, Creature* creature)
-	{
-		uint32 creature_id = creature->GetEntry();
-
-		Eluna::Push(L, VIP::GetCreatureVIP(creature_id));
-		return 1;
-	}
-	int GetCreatureMG(Eluna* /*E*/, lua_State* L, Creature* creature)
-	{
-		uint32 creature_id = creature->GetEntry();
-
-		Eluna::Push(L, VIP::GetCreatureMG(creature_id));
-		return 1;
-	}
-	int SetCreatureVIP(Eluna* /*E*/, lua_State* L, Creature* creature)
-	{
-		uint32 creature_id = creature->GetEntry();
-		uint8 vip = Eluna::CHECKVAL<uint8>(L, 2);
-
-		VIP::SetCreatureVIP(creature_id, vip);
-		return 0;
-	}
-	int SetCreatureMG(Eluna* /*E*/, lua_State* L, Creature* creature)
-	{
-		uint32 creature_id = creature->GetEntry();
-		uint32 mg = Eluna::CHECKVAL<uint32>(L, 2);
-
-		VIP::SetCreatureMG(creature_id, mg);
-		return 0;
-	}
-
 
 CreatureMethods
  {
     /**
 	// Grumboz VIP Engine creature methods
-	int GetCreatureVIP(Eluna* /*E*/, lua_State* L, Creature* creature)
+	int GetCreatureVIP(lua_State* L, Creature* creature)
 	{
 		uint32 creature_id = creature->GetEntry();
 
-		Eluna::Push(L, VIP::GetCreatureVIP(creature_id));
+		Eluna::Push(L, sVIP->GetCreatureVIP(creature_id));
 		return 1;
 	}
-	int GetCreatureMG(Eluna* /*E*/, lua_State* L, Creature* creature)
+	int GetCreatureMG(lua_State* L, Creature* creature)
 	{
 		uint32 creature_id = creature->GetEntry();
 
-		Eluna::Push(L, VIP::GetCreatureMG(creature_id));
+		Eluna::Push(L, sVIP->GetCreatureMG(creature_id));
 		return 1;
 	}
-	int SetCreatureVIP(Eluna* /*E*/, lua_State* L, Creature* creature)
+	int SetCreatureVIP(lua_State* L, Creature* creature)
 	{
 		uint32 creature_id = creature->GetEntry();
 		uint8 vip = Eluna::CHECKVAL<uint8>(L, 2);
 
-		VIP::SetCreatureVIP(creature_id, vip);
+		sVIP->SetCreatureVIP(creature_id, vip);
 		return 0;
 	}
-	int SetCreatureMG(Eluna* /*E*/, lua_State* L, Creature* creature)
+	int SetCreatureMG(lua_State* L, Creature* creature)
 	{
 		uint32 creature_id = creature->GetEntry();
 		uint32 mg = Eluna::CHECKVAL<uint32>(L, 2);
 
-		VIP::SetCreatureMG(creature_id, mg);
+		sVIP->SetCreatureMG(creature_id, mg);
 		return 0;
 	}
 
  namespace ItemMethods
  {
 	// Grumboz VIP Engine item methods
-	int GetItemVIP(Eluna* /*E*/, lua_State* L, Item* item)
+	int GetItemVIP(lua_State* L, Item* item)
 	{
 		uint32 item_id = item->GetEntry();
-		Eluna::Push(L, VIP::GetItemVIP(item_id));
+		Eluna::Push(L, sVIP->GetItemVIP(item_id));
 		return 1;
 	}
-	int SetItemVIP(Eluna* /*E*/, lua_State* L, Item* item)
+	int SetItemVIP(lua_State* L, Item* item)
 	{
 		uint32 item_id = item->GetEntry();
 		uint8 vip = Eluna::CHECKVAL<uint8>(L, 2);
-		VIP::SetItemVIP(item_id, vip);
+		sVIP->SetItemVIP(item_id, vip);
 		return 1;
 	}
 
-
+*********************************
 Guild:DepositBankMoney() function
+*********************************
 
-	LuaFunctions
-		ElunaRegister<Guild> GuildMethods[] =
-			// other
-			#ifndef CLASSIC
-				{ "DepositBankMoney", &LuaGuild::DepositBankMoney },
-				{ "WithdrawBankMoney", &LuaGuild::WithdrawBankMoney },
-			#endif
-
-	GuildMethods -- place at the end
+LuaFunctions
+	ElunaRegister<Guild> GuildMethods[] =
+		// other
 		#ifndef CLASSIC
-			// Move to Player methods
-			/**
-			 * Windraws money from the [Guild] bank
-			 *
-			 * @param [Player] player
-			 * @param uint32 money
-			 */
-			int WithdrawBankMoney(lua_State* L, Guild* guild)
-			{
-				Player* player = Eluna::CHECKOBJ<Player>(L, 2);
-				uint32 money = Eluna::CHECKVAL<uint32>(L, 3);
-		#ifndef TRINITY
-				if (guild->GetGuildBankMoney() < money)
-					return 0;
-				guild->SetBankMoney(guild->GetGuildBankMoney() - money);
-		#else
-				guild->HandleMemberWithdrawMoney(player->GetSession(), money);
+			{ "DepositBankMoney", &LuaGuild::DepositBankMoney },
+			{ "WithdrawBankMoney", &LuaGuild::WithdrawBankMoney },
 		#endif
-				return 0;
-			}
 
-			// Move to Player methods
-			/**
-			 * Deposits money to the [Guild] bank
-			 *
-			 * @param [Player] player
-			 * @param uint32 money
-			 */
-			int DepositBankMoney(lua_State* L, Guild* guild)
-			{
-				Player* player = Eluna::CHECKOBJ<Player>(L, 2);
-				uint32 money = Eluna::CHECKVAL<uint32>(L, 3);
-
-		#ifndef TRINITY
-				guild->SetBankMoney(guild->GetGuildBankMoney() + money);
-		#else
-				guild->HandleMemberDepositMoney(player->GetSession(), money);
-		#endif
+GuildMethods -- place at the end
+	#ifndef CLASSIC
+		// Move to Player methods
+		/**
+		 * Windraws money from the [Guild] bank
+		 *
+		 * @param [Player] player
+		 * @param uint32 money
+		 */
+		int WithdrawBankMoney(lua_State* L, Guild* guild)
+		{
+			Player* player = Eluna::CHECKOBJ<Player>(L, 2);
+			uint32 money = Eluna::CHECKVAL<uint32>(L, 3);
+	#ifndef TRINITY
+			if (guild->GetGuildBankMoney() < money)
 				return 0;
-			}
-		#endif
+			guild->SetBankMoney(guild->GetGuildBankMoney() - money);
+	#else
+			guild->HandleMemberWithdrawMoney(player->GetSession(), money);
+	#endif
+			return 0;
+		}
+
+		// Move to Player methods
+		/**
+		 * Deposits money to the [Guild] bank
+		 *
+		 * @param [Player] player
+		 * @param uint32 money
+		 */
+		int DepositBankMoney(lua_State* L, Guild* guild)
+		{
+			Player* player = Eluna::CHECKOBJ<Player>(L, 2);
+			uint32 money = Eluna::CHECKVAL<uint32>(L, 3);
+
+	#ifndef TRINITY
+			guild->SetBankMoney(guild->GetGuildBankMoney() + money);
+	#else
+			guild->HandleMemberDepositMoney(player->GetSession(), money);
+	#endif
+			return 0;
+		}
+	#endif
