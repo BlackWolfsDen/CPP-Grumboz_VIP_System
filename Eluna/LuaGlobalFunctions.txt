@@ -1,0 +1,305 @@
+LuaFunctions.cpp
+
+#include "Grumboz_VIP_Core.h"
+
+ElunaGlobal::ElunaRegister GlobalMethods[]
+
+	// Grumboz VIP Engine global methods 
+	{ "GetVIPMAX", &LuaGlobalFunctions::GetVIPMAX },			// GetVIPMAX(); returns maximum VIP rank.
+	{ "GetVIPVOTECOUNT", &LuaGlobalFunctions::GetVIPVOTECOUNT },// GetVIPVOTECOUNT(); returns how many votes to rank up VIP +1 rank.
+	{ "GetVIPCOINID", &LuaGlobalFunctions::GetVIPCOINID },		// GetVIPCOINID(); returns item id.
+	{ "GetVIPSTONEID", &LuaGlobalFunctions::GetVIPSTONEID },	// GetVIPSTONEID(); returns item id.
+	{ "GetVIPMGID", &LuaGlobalFunctions::GetVIPMGID },			// GetVIPMGID(); returns item id.
+	{ "GetVIPOFFSET", &LuaGlobalFunctions::GetVIPOFFSET },		// GetVIPOFFSET(); returns float offset value.
+	{ "GetTALENTBONUS", &LuaGlobalFunctions::GetTALENTBONUS },	// GetTALENTBONUS(); returns how many extra tp per VIP rank.
+	{ "GetLEVELBONUS", &LuaGlobalFunctions::GetLEVELBONUS },	// GetLEVELBONUS(); returns how many extra levels per VIP rank.
+ 
+     // Boolean
+	 
+	// Grumboz VIP Engine global methods 
+	{ "GetVIPVOTE_ENABLE", &LuaGlobalFunctions::GetVIPVOTE_ENABLE },			// GetVIPVOTE_ENABLE(); returns bool value. ?Do Votes increase VIP ranks?
+	{ "GetLEVELBONUS_ENABLE", &LuaGlobalFunctions::GetLEVELBONUS_ENABLE },		// GetLEVELBONUS_ENABLE(); returns bool value. do players get extra levels per VIP rank.
+
+ElunaRegister<Player> PlayerMethods[] =
+ {
+     // Getters
+	 
+	// Grumboz VIP Engine player getter methods
+	{ "GetPlayerVIP", &LuaPlayer::GetPlayerVIP },				// player:GetPlayerVIP(); returns uint8 value of a players VIP rank.
+	{ "GetPlayerMG", &LuaPlayer::GetPlayerMG },					// player:GetPlayerMG(); returns uint32 value of players total mg stored.(NOT IN INVENTORY)
+	{ "GetPlayerVOTES", &LuaPlayer::GetPlayerVOTES },			// player:GetPlayerVOTES(); returns uint32 value of players total voting count.
+
+	// Setters
+	
+	// Grumboz VIP Engine player setter methods 
+	{ "SetPlayerVIP", &LuaPlayer::SetPlayerVIP },
+	{ "SetPlayerMG", &LuaPlayer::SetPlayerMG },
+	{ "SetPlayerVOTES", &LuaPlayer::SetPlayerVOTES },
+
+ElunaRegister<Creature> CreatureMethods[] =
+ {
+     // Getters
+
+	// Grumboz VIP Engine creature getter methods
+	{ "GetCreatureVIP", &LuaCreature::GetCreatureVIP },				// creature:GetCreatureVIP(uint32 creature_id); returns uint8 value of a creatures VIP rank.
+	{ "GetCreatureMG", &LuaCreature::GetCreatureMG },				// creature:GetCreatureMG(uint32 creature_id); returns uint32 value of creature mg .
+ 
+     // Setters
+
+	// Grumboz VIP Engine creature setter methods
+	{ "SetCreatureVIP", &LuaCreature::SetCreatureVIP },				// creature:SetCreatureVIP(uint32 creature_id); sets  uint8 value of a creatures VIP rank.
+	{ "SetCreatureMG", &LuaCreature::SetCreatureMG },				// creature:SetCreatureMG(uint32 creature_id); sets uint32 value of creature mg .
+
+ ElunaRegister<Item> ItemMethods[] =
+ {
+     // Getters
+
+	// Grumboz VIP Engine item getter methods 
+	{ "GetItemVIP", &LuaItem::GetItemVIP },
+ 
+     // Setters
+
+	// Grumboz VIP Engine item Setter methods 
+	{ "SetItemVIP", &LuaItem::SetItemVIP },
+
+
+
+GlobalMethods
+
+	// Grumboz VIP Engine player methods
+	int GetVIPMAX(Eluna* /*E*/, lua_State* L)
+	{
+		Eluna::Push(L, VIP::GetVIPMAX());
+		return 1;
+	}
+	int GetVIPVOTE_ENABLE(Eluna* /*E*/, lua_State* L)
+	{
+		Eluna::Push(L, VIP::GetVIPVOTE_ENABLE());
+		return 1;
+	}
+	int GetVIPVOTECOUNT(Eluna* /*E*/, lua_State* L)
+	{
+		Eluna::Push(L, VIP::GetVIPVOTECOUNT());
+		return 1;
+	}
+	int GetVIPCOINID(Eluna* /*E*/, lua_State* L)
+	{
+		Eluna::Push(L, VIP::GetVIPCOINID());
+		return 1;
+	}
+	int GetVIPSTONEID(Eluna* /*E*/, lua_State* L)
+	{
+		Eluna::Push(L, VIP::GetVIPSTONEID());
+		return 1;
+	}
+	int GetVIPMGID(Eluna* /*E*/, lua_State* L)
+	{
+		Eluna::Push(L, VIP::GetVIPMGID());
+		return 1;
+	}
+	int GetVIPOFFSET(Eluna* /*E*/, lua_State* L)
+	{
+		Eluna::Push(L, VIP::GetVIPOFFSET());
+		return 1;
+	}
+	int GetTALENTBONUS(Eluna* /*E*/, lua_State* L)
+	{
+		Eluna::Push(L, VIP::GetTALENTBONUS());
+		return 1;
+	}
+	int GetLEVELBONUS_ENABLE(Eluna* /*E*/, lua_State* L)
+	{
+		Eluna::Push(L, VIP::GetLEVELBONUS_ENABLE());
+		return 1;
+	}
+	int GetLEVELBONUS(Eluna* /*E*/, lua_State* L)
+	{
+		Eluna::Push(L, VIP::GetLEVELBONUS());
+		return 1;
+	}
+
+
+PlayerMethods
+ {
+	// Grumboz VIP Engine player methods
+	int GetPlayerVIP(Eluna* /*E*/, lua_State* L, Player* player)
+	{
+		uint32 acctId = player->GetSession()->GetAccountId();
+		Eluna::Push(L, VIP::GetPlayerVIP(acctId));
+		return 1;
+	}
+	int GetPlayerMG(Eluna* /*E*/, lua_State* L, Player* player)
+	{
+		uint32 acctId = player->GetSession()->GetAccountId();
+		Eluna::Push(L, VIP::GetPlayerMG(acctId));
+		return 1;
+	}
+	int GetPlayerVOTES(Eluna* /*E*/, lua_State* L, Player* player)
+	{
+		uint32 acctId = player->GetSession()->GetAccountId();
+		Eluna::Push(L, VIP::GetPlayerVOTES(acctId));
+		return 1;
+	}
+	int SetPlayerVIP(Eluna* /*E*/, lua_State* L, Player* player)
+	{
+		uint32 acctId = player->GetSession()->GetAccountId();
+		uint8 vip = Eluna::CHECKVAL<uint8>(L, 2);
+		VIP::SetPlayerVIP(acctId, vip);
+		return 0;
+	}
+	int SetPlayerMG(Eluna* /*E*/, lua_State* L, Player* player)
+	{
+		uint32 acctId = player->GetSession()->GetAccountId();
+		uint32 mg = Eluna::CHECKVAL<uint32>(L, 2);
+		VIP::SetPlayerMG(acctId, mg);
+		return 0;
+	}
+	int SetPlayerVOTES(Eluna* /*E*/, lua_State* L, Player* player)
+	{
+		uint32 acctId = player->GetSession()->GetAccountId();
+		uint32 votes = Eluna::CHECKVAL<uint32>(L, 2);
+		VIP::SetPlayerVOTES(acctId, votes);
+		return 0;
+	}
+
+CreatureMethods
+ {
+	// Grumboz VIP Engine creature methods
+	int GetCreatureVIP(Eluna* /*E*/, lua_State* L, Creature* creature)
+	{
+		uint32 creature_id = creature->GetEntry();
+
+		Eluna::Push(L, VIP::GetCreatureVIP(creature_id));
+		return 1;
+	}
+	int GetCreatureMG(Eluna* /*E*/, lua_State* L, Creature* creature)
+	{
+		uint32 creature_id = creature->GetEntry();
+
+		Eluna::Push(L, VIP::GetCreatureMG(creature_id));
+		return 1;
+	}
+	int SetCreatureVIP(Eluna* /*E*/, lua_State* L, Creature* creature)
+	{
+		uint32 creature_id = creature->GetEntry();
+		uint8 vip = Eluna::CHECKVAL<uint8>(L, 2);
+
+		VIP::SetCreatureVIP(creature_id, vip);
+		return 0;
+	}
+	int SetCreatureMG(Eluna* /*E*/, lua_State* L, Creature* creature)
+	{
+		uint32 creature_id = creature->GetEntry();
+		uint32 mg = Eluna::CHECKVAL<uint32>(L, 2);
+
+		VIP::SetCreatureMG(creature_id, mg);
+		return 0;
+	}
+
+
+CreatureMethods
+ {
+    /**
+	// Grumboz VIP Engine creature methods
+	int GetCreatureVIP(Eluna* /*E*/, lua_State* L, Creature* creature)
+	{
+		uint32 creature_id = creature->GetEntry();
+
+		Eluna::Push(L, VIP::GetCreatureVIP(creature_id));
+		return 1;
+	}
+	int GetCreatureMG(Eluna* /*E*/, lua_State* L, Creature* creature)
+	{
+		uint32 creature_id = creature->GetEntry();
+
+		Eluna::Push(L, VIP::GetCreatureMG(creature_id));
+		return 1;
+	}
+	int SetCreatureVIP(Eluna* /*E*/, lua_State* L, Creature* creature)
+	{
+		uint32 creature_id = creature->GetEntry();
+		uint8 vip = Eluna::CHECKVAL<uint8>(L, 2);
+
+		VIP::SetCreatureVIP(creature_id, vip);
+		return 0;
+	}
+	int SetCreatureMG(Eluna* /*E*/, lua_State* L, Creature* creature)
+	{
+		uint32 creature_id = creature->GetEntry();
+		uint32 mg = Eluna::CHECKVAL<uint32>(L, 2);
+
+		VIP::SetCreatureMG(creature_id, mg);
+		return 0;
+	}
+
+ namespace ItemMethods
+ {
+	// Grumboz VIP Engine item methods
+	int GetItemVIP(Eluna* /*E*/, lua_State* L, Item* item)
+	{
+		uint32 item_id = item->GetEntry();
+		Eluna::Push(L, VIP::GetItemVIP(item_id));
+		return 1;
+	}
+	int SetItemVIP(Eluna* /*E*/, lua_State* L, Item* item)
+	{
+		uint32 item_id = item->GetEntry();
+		uint8 vip = Eluna::CHECKVAL<uint8>(L, 2);
+		VIP::SetItemVIP(item_id, vip);
+		return 1;
+	}
+
+
+Guild:DepositBankMoney() function
+
+	LuaFunctions
+		ElunaRegister<Guild> GuildMethods[] =
+			// other
+			#ifndef CLASSIC
+				{ "DepositBankMoney", &LuaGuild::DepositBankMoney },
+				{ "WithdrawBankMoney", &LuaGuild::WithdrawBankMoney },
+			#endif
+
+	GuildMethods -- place at the end
+		#ifndef CLASSIC
+			// Move to Player methods
+			/**
+			 * Windraws money from the [Guild] bank
+			 *
+			 * @param [Player] player
+			 * @param uint32 money
+			 */
+			int WithdrawBankMoney(lua_State* L, Guild* guild)
+			{
+				Player* player = Eluna::CHECKOBJ<Player>(L, 2);
+				uint32 money = Eluna::CHECKVAL<uint32>(L, 3);
+		#ifndef TRINITY
+				if (guild->GetGuildBankMoney() < money)
+					return 0;
+				guild->SetBankMoney(guild->GetGuildBankMoney() - money);
+		#else
+				guild->HandleMemberWithdrawMoney(player->GetSession(), money);
+		#endif
+				return 0;
+			}
+
+			// Move to Player methods
+			/**
+			 * Deposits money to the [Guild] bank
+			 *
+			 * @param [Player] player
+			 * @param uint32 money
+			 */
+			int DepositBankMoney(lua_State* L, Guild* guild)
+			{
+				Player* player = Eluna::CHECKOBJ<Player>(L, 2);
+				uint32 money = Eluna::CHECKVAL<uint32>(L, 3);
+
+		#ifndef TRINITY
+				guild->SetBankMoney(guild->GetGuildBankMoney() + money);
+		#else
+				guild->HandleMemberDepositMoney(player->GetSession(), money);
+		#endif
+				return 0;
+			}
+		#endif
