@@ -79,8 +79,7 @@ VIP.LEVEL_BONUS_ENABLE = 1
 #
 #
 #	VIP.LEVEL_BONUS
-#		Description: how many extra level's a player can gain per 
-VIP level.
+#		Description: how many extra level's a player can gain per VIP level.
 #		Default: 1
 #
 
