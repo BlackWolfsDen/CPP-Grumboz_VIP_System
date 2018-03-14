@@ -18,7 +18,13 @@ line 249 add these lines inside void Player::UpdateArmor()
 [/CODE]
 
 line 271 inside void Player::UpdateArmor()
-replace SetArmor(int32(value)); with:
+replace 
+
+[CODE]
+	SetArmor(int32(value)); 
+[/CODE]
+
+with:
 
 [CODE]
 	uint32 THP = (uint32)value * MOD;
