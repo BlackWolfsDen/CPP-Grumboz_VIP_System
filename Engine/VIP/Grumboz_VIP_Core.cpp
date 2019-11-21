@@ -5,9 +5,11 @@
 #include "AccountMgr.h"
 #include "chat.h"
 #include "Config.h"
+#include "DatabaseEnv.h"
 #include "Group.h"
 #include "Grumboz_VIP_Core.h"
 #include "Language.h"
+#include "Log.h"
 #include "Movement\MotionMaster.h"
 #include "ObjectMgr.h"
 #include "player.h"
@@ -17,6 +19,8 @@
 #include "ScriptMgr.h"
 #include <unordered_map>
 #include "World.h"
+#include "WorldSession.h"
+
 
 // color definitions since i hate yellow..
 std::string green = "|cff00cc00";
@@ -392,7 +396,7 @@ public: Grumboz_VIP_Player_Engine() : PlayerScript("Grumboz_VIP_Player_Engine") 
 			AnnounceLoggingToWorld(player, 1);
 
 			uint32 guid = player->GetGUID();
-			uint32 acct_id = player->GetSession()->GetAccountId();
+            uint32 acct_id = player->GetSession()->GetAccountId();
 			uint8 Pvip = sVIP->GetPlayerVIP(acct_id);
 			bool lvl_enable = sVIP->GetLEVELBONUS_ENABLE();
 			uint8 xtra_levels = sVIP->GetLEVELBONUS();
