@@ -50,7 +50,7 @@ struct VipHearthStoneGPS
 	float o;
 };
 
-class VIP
+class TC_GAME_API VIP
 {
 
 private:
