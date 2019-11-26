@@ -215,7 +215,7 @@ public: VIP_Load_Conf() : WorldScript("VIP_Load_Conf") { };
 			TC_LOG_INFO("server.loading", "|  VIP Teleport GPS's : Loaded    ");
 
 			sVIP->SetVIPMAX(sConfigMgr->GetIntDefault("VIP.MAX", 6));
-     	sVIP->SetVIPSTART(sConfigMgr->GetIntDefault("VIP.START", 0));
+			sVIP->SetVIPSTART(sConfigMgr->GetIntDefault("VIP.START", 0));
 			sVIP->SetVIPVOTE_ENABLE(sConfigMgr->GetBoolDefault("VIP.VOTE_ENABLE", true));
 			sVIP->SetVIPVOTECOUNT(sConfigMgr->GetIntDefault("VIP.VOTE_COUNT", 125));
 			sVIP->SetVIPCOINID(sConfigMgr->GetIntDefault("VIP.COIN", 63020));
@@ -233,9 +233,9 @@ public: VIP_Load_Conf() : WorldScript("VIP_Load_Conf") { };
 
 			if (sVIP->GetVIPVOTE_ENABLE())
 			{
-					TC_LOG_INFO("server.loading", "|  VIP VOTES : ENABLED");
-          TC_LOG_INFO("server.loading", "|  VIP VOTES REQUIRED: %u", sVIP->GetVIPVOTECOUNT());
-       }
+				TC_LOG_INFO("server.loading", "|  VIP VOTES : ENABLED");
+				TC_LOG_INFO("server.loading", "|  VIP VOTES REQUIRED: %u", sVIP->GetVIPVOTECOUNT());
+			}
 
 			TC_LOG_INFO("server.loading", "|  VIP TP BONUS : %u", sVIP->GetTALENTBONUS());
 
@@ -247,12 +247,12 @@ public: VIP_Load_Conf() : WorldScript("VIP_Load_Conf") { };
 			}
 
 			if (!sObjectMgr->GetItemTemplate(sVIP->GetVIPCOINID()))
-            {
-                TC_LOG_INFO("server.loading", "! VIP COIN %u MISSING FROM DB ! SERVER CRASHING !", sVIP->GetVIPCOINID());
-            }
+			{
+				TC_LOG_INFO("server.loading", "! VIP COIN %u MISSING FROM DB ! SERVER CRASHING !", sVIP->GetVIPCOINID());
+			}
 
-            TC_LOG_INFO("server.loading", "|  VIP Coin ID : %u", sVIP->GetVIPCOINID());
-            TC_LOG_INFO("server.loading", "|  VIP Stone ID : %u", sVIP->GetVIPSTONEID());
+			TC_LOG_INFO("server.loading", "|  VIP Coin ID : %u", sVIP->GetVIPCOINID());
+			TC_LOG_INFO("server.loading", "|  VIP Stone ID : %u", sVIP->GetVIPSTONEID());
 
 			sVIP->SetVIP_COIN_NAME(sObjectMgr->GetItemTemplate(sVIP->GetVIPCOINID())->Name1);
 
