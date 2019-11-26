@@ -63,6 +63,7 @@ public:
 	// Global
 		// Getterz
 		uint8 GetVIPMAX() { return VIP_MAX; }
+        bool GetVIPSTART() { return VIP_START != 0;  }
 		bool GetVIPVOTE_ENABLE() { return VIP_VOTE_ENABLE != 0; }
 		uint32 GetVIPVOTECOUNT() { return VIP_VOTE_COUNT;	}
 		uint32 GetVIPCOINID() { return VIP_COIN_ID; }
@@ -73,10 +74,12 @@ public:
 		uint8 GetTALENTBONUS() { return VIP_TP_BONUS; }
 		bool GetLEVELBONUS_ENABLE() { return VIP_LEVEL_BONUS_ENABLE != 0; }
 		uint8 GetLEVELBONUS() { return VIP_LEVEL_BONUS; }
+        bool GetVIPTEST() { return VIPTEST; }
 
 		// Setters
 		void SetVIPMAX(uint8 v) { VIP_MAX = v; }
-		void SetVIPVOTE_ENABLE(bool v) { VIP_VOTE_ENABLE = v; }
+        void SetVIPSTART(uint8 v) { VIP_START = v; }
+        void SetVIPVOTE_ENABLE(bool v) { VIP_VOTE_ENABLE = v; }
 		void SetVIPVOTECOUNT(uint32 v) { VIP_VOTE_COUNT = v; }
 		void SetVIPCOINID(uint32 v) { VIP_COIN_ID = v; }
 		void SetVIP_COIN_NAME(std::string v) { VIP_COIN_NAME = v; }
@@ -86,6 +89,7 @@ public:
 		void SetTALENTBONUS(uint8 v) { VIP_TP_BONUS = v; }
 		void SetLEVELBONUS_ENABLE(bool v) { VIP_LEVEL_BONUS_ENABLE = v; }
 		void SetLEVELBONUS(uint8 v) { VIP_LEVEL_BONUS = v; }
+        void SetVIPTEST(bool v) {  VIPTEST = v; }
 
 	// Player
 		// Getters
@@ -126,6 +130,7 @@ public:
 private:
 	// Local Variables
 	uint8 VIP_MAX;
+    uint8 VIP_START;
 	uint8 VIP_LEVEL_BONUS;
 	uint8 VIP_TP_BONUS;
 	uint32 VIP_STONE_ID;
@@ -133,6 +138,7 @@ private:
 	uint32 VIP_MG_ID;
 	uint32 VIP_VOTE_COUNT;
 	float VIP_OFFSET;
+    bool VIPTEST;
 	bool VIP_VOTE_ENABLE;
 	bool VIP_LEVEL_BONUS_ENABLE;
 	std::string VIP_COIN_NAME;
