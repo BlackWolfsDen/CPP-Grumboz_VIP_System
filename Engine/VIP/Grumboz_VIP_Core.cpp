@@ -1,6 +1,6 @@
 // Vip core engine
 // By slp13at420 of EmuDevs.com
-// TDB 335.19111
+// TDB 335.64
 
 #include "AccountMgr.h"
 #include "chat.h"
@@ -235,7 +235,7 @@ public: VIP_Load_Conf() : WorldScript("VIP_Load_Conf") { };
 				TC_LOG_INFO("server.loading", "|  VIP VOTES : ENABLED             ");
 			}
 
-			TC_LOG_INFO("server.loading", "|  VIP TP BONUS : %u", sVIP->GetVIPVOTECOUNT());
+			TC_LOG_INFO("server.loading", "|  VIP TP BONUS : %u", sVIP->GetTALENTBONUS());
 
 			if (sVIP->GetLEVELBONUS_ENABLE())
 			{
