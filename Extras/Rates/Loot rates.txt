@@ -1,4 +1,4 @@
-src/server/game/Loot/LootMgr.cpp b/src/server/game/Loot/LootMgr.cpp
+src/server/game/Loot/LootMgr.cpp
 
 find 
 [CODE]
