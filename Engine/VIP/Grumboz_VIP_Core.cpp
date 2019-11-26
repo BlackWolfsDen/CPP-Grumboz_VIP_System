@@ -1,6 +1,6 @@
 // Vip core engine
 // By slp13at420 of EmuDevs.com
-// TDB 335.64
+// TDB 335.1911
 
 #include "AccountMgr.h"
 #include "chat.h"
@@ -212,9 +212,10 @@ public: VIP_Load_Conf() : WorldScript("VIP_Load_Conf") { };
 			data7.z = 9.9671f;
 			data7.o = 3.5517f;
 
-			TC_LOG_INFO("server.loading", "|   VIP Teleport GPS's : Loaded    ");
+			TC_LOG_INFO("server.loading", "|  VIP Teleport GPS's : Loaded    ");
 
 			sVIP->SetVIPMAX(sConfigMgr->GetIntDefault("VIP.MAX", 6));
+            sVIP->SetVIPSTART(sConfigMgr->GetIntDefault("VIP.START", 0));
 			sVIP->SetVIPVOTE_ENABLE(sConfigMgr->GetBoolDefault("VIP.VOTE_ENABLE", true));
 			sVIP->SetVIPVOTECOUNT(sConfigMgr->GetIntDefault("VIP.VOTE_COUNT", 125));
 			sVIP->SetVIPCOINID(sConfigMgr->GetIntDefault("VIP.COIN", 63020));
@@ -224,8 +225,10 @@ public: VIP_Load_Conf() : WorldScript("VIP_Load_Conf") { };
 			sVIP->SetTALENTBONUS(sConfigMgr->GetIntDefault("VIP.TP_BONUS", 14));
 			sVIP->SetLEVELBONUS_ENABLE(sConfigMgr->GetBoolDefault("VIP.LEVEL_BONUS_ENABLE", true));
 			sVIP->SetLEVELBONUS(sConfigMgr->GetIntDefault("VIP.LEVEL_BONUS", 1));
+            sVIP->SetVIPTEST(sConfigMgr->GetBoolDefault("VIP.TEST", 0));
 
 			TC_LOG_INFO("server.loading", "|  VIP MAX_VIP : %u", sVIP->GetVIPMAX());
+            if (sVIP->GetVIPSTART()) { TC_LOG_INFO("server.loading", "|  VIP START RANK : 1"); } else { TC_LOG_INFO("server.loading", "|  VIP START RANK : 0"); }
 
 			if (sVIP->GetVIPVOTE_ENABLE())
 			{
@@ -241,7 +244,13 @@ public: VIP_Load_Conf() : WorldScript("VIP_Load_Conf") { };
 				TC_LOG_INFO("server.loading", "|  VIP offset : %.2f", sVIP->GetVIPOFFSET());
 			}
 
-			if (!sObjectMgr->GetItemTemplate(sVIP->GetVIPCOINID())) { TC_LOG_INFO("server.loading", "! VIP COIN %u MISSING FROM DB ! SERVER CRASHING !", sVIP->GetVIPCOINID()); };
+			if (!sObjectMgr->GetItemTemplate(sVIP->GetVIPCOINID()))
+            {
+                TC_LOG_INFO("server.loading", "! VIP COIN %u MISSING FROM DB ! SERVER CRASHING !", sVIP->GetVIPCOINID());
+            }
+
+            TC_LOG_INFO("server.loading", "|  VIP Coin ID : %u", sVIP->GetVIPCOINID());
+            TC_LOG_INFO("server.loading", "|  VIP Stone ID : %u", sVIP->GetVIPSTONEID());
 
 			sVIP->SetVIP_COIN_NAME(sObjectMgr->GetItemTemplate(sVIP->GetVIPCOINID())->Name1);
 
@@ -269,40 +278,21 @@ void VIP::SetHearthStone(uint32 guid, uint32 map_id, float x, float y, float z, 
 void VIP::SetPlayerVIP(uint32 acct_id, uint8 pvip)
 { // you must update votes first for the dead mans check
 
-	if (sVIP->GetVIPVOTE_ENABLE())
-	{
-		uint32 pvotes = sVIP->Vip[acct_id].votes;
-		uint32 sVvotes = sVIP->GetVIPVOTECOUNT();
-		uint8 sVmax = sVIP->GetVIPMAX();
-
-		pvip = uint8(pvotes / sVvotes); // dead mans check auto-calibrater
-
-		if (pvotes < sVvotes)
-		{
-			pvip = 1;
-		}
-
-		if (pvotes >(sVvotes * sVmax))
-		{
-			pvip = sVmax;
-		}
-	}
+	LoginDatabase.PExecute("UPDATE account SET `vip`='%u' WHERE `id`='%u';", pvip, acct_id);
 
 	sVIP->Vip[acct_id].vip = pvip;
-
-	LoginDatabase.PExecute("UPDATE account SET `vip`='%u' WHERE `id`='%u';", sVIP->Vip[acct_id].vip, acct_id);
 }
 
 void VIP::SetPlayerMG(uint32 acct_id, uint32 pmg)
 {
-	LoginDatabase.PExecute("UPDATE account SET `mg`='%u' WHERE `id`='%u';", sVIP->Vip[acct_id].mg, acct_id);
+	LoginDatabase.PExecute("UPDATE account SET `mg`='%u' WHERE `id`='%u';", pmg, acct_id);
 
 	sVIP->Vip[acct_id].mg = pmg;
 }
 
 void VIP::SetPlayerVOTES(uint32 acct_id, uint32 pvotes)
 {
-	LoginDatabase.PExecute("UPDATE account SET `votes`='%u' WHERE `id`='%u';", sVIP->Vip[acct_id].votes, acct_id);
+	LoginDatabase.PExecute("UPDATE account SET `votes`='%u' WHERE `id`='%u';", pvotes, acct_id);
 
 	sVIP->Vip[acct_id].votes = pvotes;
 }
@@ -374,9 +364,11 @@ public: Grumboz_VIP_Account_Engine() : AccountScript("Grumboz_VIP_Account_Engine
 					data.mg = pmg;
 					data.votes = pvotes;
 
-					sVIP->SetPlayerVIP(accountId, pvip);
+                    if (sVIP->Vip[accountId].vip < (sVIP->GetVIPSTART() || 0)) { sVIP->SetPlayerVIP(accountId, (sVIP->GetVIPSTART() || 0)); }
 
-					TC_LOG_INFO("server.loading", "ACCOUNT::LOGIN ID:%u VIP:%u", accountId, sVIP->Vip[accountId].vip);
+                    if (sVIP->Vip[accountId].vip > sVIP->GetVIPMAX()) { sVIP->SetPlayerVIP(accountId, sVIP->GetVIPMAX()); }
+
+                    if (sVIP->GetVIPTEST()) { TC_LOG_INFO("server.loading", "[ACCOUNT]::LOGIN ID:%u VIP:%u", accountId, sVIP->Vip[accountId].vip); }
 				}
 			}
 		}
@@ -403,8 +395,8 @@ public: Grumboz_VIP_Player_Engine() : PlayerScript("Grumboz_VIP_Player_Engine") 
 			uint8 Plvl = player->GetLevel();
 			uint32 Php = player->GetHealth();
 			uint8 max_level = sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL);
-
-			uint8 VIP_level_cap = (max_level + (xtra_levels * Pvip)) - xtra_levels; // has to compensate for base VIP 1
+            bool VIP_START = sVIP->GetVIPSTART();
+            uint8 VIP_level_cap = (max_level + (xtra_levels * Pvip)); // has to compensate for base VIP 1
 
 			ChatHandler(player->GetSession()).PSendSysMessage("Welcome %s, you are VIP %u.", player->GetName().c_str(), sVIP->Vip[acct_id].vip);
 			ChatHandler(player->GetSession()).PSendSysMessage("%stype `.vip` for a list of VIP commands.", green.c_str());
@@ -414,7 +406,7 @@ public: Grumboz_VIP_Player_Engine() : PlayerScript("Grumboz_VIP_Player_Engine") 
 				sVIP->SetHearthStone(guid, player->GetMapId(), player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation());
 			}
 
-			if (Plvl != VIP_level_cap)
+            if (Plvl != VIP_level_cap)
 			{
 				if (lvl_enable)
 				{
@@ -423,7 +415,9 @@ public: Grumboz_VIP_Player_Engine() : PlayerScript("Grumboz_VIP_Player_Engine") 
 			}
 
 			player->SetMaxHealth(Php + ((Php * sVIP->GetVIPOFFSET()) * Pvip));
-		}
+
+            if (sVIP->GetVIPTEST()) { TC_LOG_INFO("server.loading", "[PLAYER]::LOGIN ID:%u VIP:%u MAX HP:%u", acct_id, sVIP->Vip[acct_id].vip, player->GetHealth()); }
+        }
 
 		virtual void OnCreatureKill(Player* player, Creature* creature)
 		{
@@ -431,6 +425,10 @@ public: Grumboz_VIP_Player_Engine() : PlayerScript("Grumboz_VIP_Player_Engine") 
 			uint32 creatureId = creature->GetEntry();
 			uint8 cVip = urand(1, sVIP->GetCreatureVIP(creatureId));
 			uint32 cMg = sVIP->GetCreatureMG(creatureId);
+			uint32 accountId = player->GetSession()->GetAccountId();
+			uint32 MG = sVIP->GetPlayerMG(accountId);
+			uint8 pVip = sVIP->GetPlayerVIP(accountId);
+            uint32 reward = 0;
 
 			if (cMg > 0)
 			{
@@ -447,11 +445,8 @@ public: Grumboz_VIP_Player_Engine() : PlayerScript("Grumboz_VIP_Player_Engine") 
 
 						if (player && player->GetSession())
 						{
-							uint32 accountId = player->GetSession()->GetAccountId();
-							uint32 MG = sVIP->GetPlayerMG(accountId);
-							uint8 pVip = sVIP->GetPlayerVIP(accountId);
 
-							uint32 reward = (cMg * cVip) * pVip;
+							reward = (cMg * cVip) * pVip;
 
 							ChatHandler(player->GetSession()).PSendSysMessage("+%u", reward);
 							if (!player->AddItem(itemId, reward))
@@ -460,16 +455,13 @@ public: Grumboz_VIP_Player_Engine() : PlayerScript("Grumboz_VIP_Player_Engine") 
 
 								ChatHandler(player->GetSession()).PSendSysMessage("Banked.");
 							}
-						}
+
+                        }
 					}
 				}
 				else
 				{
-					uint32 accountId = player->GetSession()->GetAccountId();
-					uint32 MG = sVIP->GetPlayerMG(accountId);
-					uint8 pVip = sVIP->GetPlayerVIP(accountId);
-
-					uint32 reward = (cMg * cVip) * pVip;
+					reward = (cMg * cVip) * pVip;
 
 					if (!player->AddItem(itemId, reward))
 					{
@@ -478,6 +470,8 @@ public: Grumboz_VIP_Player_Engine() : PlayerScript("Grumboz_VIP_Player_Engine") 
 						ChatHandler(player->GetSession()).PSendSysMessage("+%u Banked.", reward);
 					}
 				}
+
+                if (sVIP->GetVIPTEST()) { TC_LOG_INFO("server.loading", "[CREATURE_KILL]:: ACCT_ID:%u ACCT_VIP:%u NPC_ID:%u NPC_VIP:%u NPC_DB_MG:%u REWARD_MG:%u", accountId, sVIP->Vip[accountId].vip, creatureId, cVip, cMg, reward); }
 			}
 		}
 };
@@ -492,9 +486,9 @@ public:
 		static std::vector<ChatCommand> vipCommandChangeTable =
 		{
 			{ "race", rbac::RBAC_IN_GRANTED_LIST, true, &HandleChangeRaceCommand, "allows the player to change there race during next login." },
-		{ "faction", rbac::RBAC_IN_GRANTED_LIST, true, &HandleChangeFactionCommand, "allows the player to change there faction during next login." },
-		{ "custom", rbac::RBAC_IN_GRANTED_LIST, true, &HandleCustomizeCommand, "allows the player to re-costumize there character during next login." },
-		{ "scale", rbac::RBAC_IN_GRANTED_LIST, true, &HandleScaleCommand, "allows the player to re-size there character." },
+		    { "faction", rbac::RBAC_IN_GRANTED_LIST, true, &HandleChangeFactionCommand, "allows the player to change there faction during next login." },
+		    { "custom", rbac::RBAC_IN_GRANTED_LIST, true, &HandleCustomizeCommand, "allows the player to re-costumize there character during next login." },
+		    { "scale", rbac::RBAC_IN_GRANTED_LIST, true, &HandleScaleCommand, "allows the player to re-size there character." },
 		};
 
 		static std::vector<ChatCommand> vipCommandSetTable =
@@ -507,14 +501,14 @@ public:
 		static std::vector<ChatCommand> vipCommandTable =
 		{
 			{ "mall",		rbac::RBAC_IN_GRANTED_LIST, true, &HandleVipMallCommand, "Teleports the player to a VIP mall." },
-		{ "home",		rbac::RBAC_IN_GRANTED_LIST, true, &HandleHomeCommand, "Teleports the player to there faction home mall." },
-		{ "hearthstone",rbac::RBAC_IN_GRANTED_LIST, true, &HandleHearthStoneCommand, "Teleports a player to there custom pre-set location." },
-		{ "repair",		rbac::RBAC_IN_GRANTED_LIST, true, &HandleRepairCommand, repair_info },
-		{ "morph",		rbac::RBAC_IN_GRANTED_LIST, true, &HandleMORPHCommand, "Allows players to temporarily morph there characters." },
-		{ "demorph",	rbac::RBAC_IN_GRANTED_LIST, true, &HandleDeMORPHCommand, "Allows players to demorph there characters." },
-		{ "buff",		rbac::RBAC_IN_GRANTED_LIST, true, &HandleBuffCommand, "VIP Command used to Buff your character. Amount of Buffs are based on VIP level." },
-		{ "set",		rbac::RBAC_IN_GRANTED_LIST, true, NULL, "Player customizable commands.", vipCommandSetTable },
-		{ "change",		rbac::RBAC_IN_GRANTED_LIST, true, NULL, "Character customizing commands.", vipCommandChangeTable },
+		    { "home",		rbac::RBAC_IN_GRANTED_LIST, true, &HandleHomeCommand, "Teleports the player to there faction home mall." },
+		    { "hearthstone",rbac::RBAC_IN_GRANTED_LIST, true, &HandleHearthStoneCommand, "Teleports a player to there custom pre-set location." },
+		    { "repair",		rbac::RBAC_IN_GRANTED_LIST, true, &HandleRepairCommand, repair_info },
+		    { "morph",		rbac::RBAC_IN_GRANTED_LIST, true, &HandleMORPHCommand, "Allows players to temporarily morph there characters." },
+		    { "demorph",	rbac::RBAC_IN_GRANTED_LIST, true, &HandleDeMORPHCommand, "Allows players to demorph there characters." },
+		    { "buff",		rbac::RBAC_IN_GRANTED_LIST, true, &HandleBuffCommand, "VIP Command used to Buff your character. Amount of Buffs are based on VIP level." },
+		    { "set",		rbac::RBAC_IN_GRANTED_LIST, true, NULL, "Player customizable commands.", vipCommandSetTable },
+		    { "change",		rbac::RBAC_IN_GRANTED_LIST, true, NULL, "Character customizing commands.", vipCommandChangeTable },
 		};
 
 		static std::vector<ChatCommand> commandTable =
@@ -772,26 +766,11 @@ public: VIP_Coin_Script() : ItemScript("VIP_Coin_Script") { };
 			ChatHandler(player->GetSession()).PSendSysMessage("%s**********************************", green.c_str());
 			ChatHandler(player->GetSession()).PSendSysMessage("%sYou are VIP:%s%u%s of %s%u.", green.c_str(), white.c_str(), pVip, green.c_str(), white.c_str(), sVIP->GetVIPMAX());
 			ChatHandler(player->GetSession()).PSendSysMessage("%sYou have %s%u %smg's", green.c_str(), white.c_str(), pMg, green.c_str());
-
-			if (pVotes <= 10) { ChatHandler(player->GetSession()).PSendSysMessage("%sYou have Voted %s%u%s time's.", green.c_str(), white.c_str(), pVotes, green.c_str()); };
-			if (pVotes > 10) { ChatHandler(player->GetSession()).PSendSysMessage("%sThank you for voting %s%u%s time's.", green.c_str(), white.c_str(), pVotes, green.c_str()); };
-
 			ChatHandler(player->GetSession()).PSendSysMessage("%sYou recieve a %s%u%s %sstat increase.", green.c_str(), white.c_str(), uint8(sVIP->GetVIPOFFSET() * 100)*pVip, "%", green.c_str());
-
-			if (voting)
-			{
-				if (pVip < sVIP->GetVIPMAX())
-				{
-					uint32 Votes_Required = ((pVip + 1) * sVIP->GetVIPVOTECOUNT()) - pVotes;
-
-					ChatHandler(player->GetSession()).PSendSysMessage("%sYou need %s%u%s more votes to reach the next VIP rank:%s%u%s.", green.c_str(), white.c_str(), Votes_Required, green.c_str(), white.c_str(), (pVip + 1), green.c_str());
-
-					ChatHandler(player->GetSession()).PSendSysMessage("%s**********************************", green.c_str());
-
-					return true;
-				}
-			}
+			ChatHandler(player->GetSession()).PSendSysMessage("%sYou have %s%u%s VIP Vote Points.", green.c_str(), white.c_str(), pVotes, green.c_str());
 			ChatHandler(player->GetSession()).PSendSysMessage("%s**********************************", green.c_str());
+			ChatHandler(player->GetSession()).PSendSysMessage("%s**********************************", green.c_str());
+
 			return true;
 		}
 };
@@ -811,8 +790,6 @@ public: VIP_Stone_Script() : ItemScript("VIP_Stone_Script") { };
 		{
 			uint32 acct_id = player->GetSession()->GetAccountId();
 			uint8 pVip = sVIP->GetPlayerVIP(acct_id);
-			uint32 pMg = sVIP->GetPlayerMG(acct_id);
-			uint32 pVotes = sVIP->GetPlayerVOTES(acct_id);
 
 			if (pVip >= sVIP->GetVIPMAX())
 			{
@@ -822,11 +799,9 @@ public: VIP_Stone_Script() : ItemScript("VIP_Stone_Script") { };
 
 			if (pVip < sVIP->GetVIPMAX())
 			{
-				sVIP->SetPlayerVOTES(acct_id, pVotes + sVIP->GetVIPVOTECOUNT()); // must be first for the dead mans check
+				RemoveItem(sVIP->GetVIPSTONEID(), player);
 
 				sVIP->SetPlayerVIP(acct_id, pVip + 1);
-
-				RemoveItem(sVIP->GetVIPSTONEID(), player);
 
 				return true;
 			}
@@ -870,6 +845,8 @@ class VIP_MG_BANKER : public CreatureScript
                 std::string withdraw1000 = "Withdraw 1,000 " + itemName + "'s. Fee:10 " + itemName + "'s.";
                 std::string withdraw10000 = "Withdraw 10,000 " + itemName + "'s. Fee:100 " + itemName + "'s.";
                 std::string withdraw100000 = "Withdraw 100,000 " + itemName + "'s. Fee:1,000 " + itemName + "'s.";
+                std::string rankup1 = "Rank up your VIP by using";
+                std::string rankup2 = "your VIP vote points.";
 
                 if (MG == 1)
                     currency_inBank = "Balance:" + ConvertNumberToString(MG) + " " + itemName;
@@ -904,6 +881,21 @@ class VIP_MG_BANKER : public CreatureScript
                     if (MG >= 101000) { AddGossipItemFor(player, 10, withdraw100000.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2006); };
                 }
 
+                if (sVIP->GetPlayerVIP(accountId) < sVIP->GetVIPMAX())
+                {
+
+                    if (sVIP->GetVIPTEST()) { TC_LOG_INFO("server.loading", "MG_BANKER::[MENU]Buy VIP Stone [CHECK]. PLAYER_VIP:%u MAX_VIP:%u", sVIP->GetPlayerVIP(accountId), sVIP->GetVIPMAX()); }
+
+                    if (sVIP->GetVIPVOTE_ENABLE() && pVotes >= sVIP->GetVIPVOTECOUNT())
+                    {
+                        AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+                        AddGossipItemFor(player, 10, rankup1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+                        AddGossipItemFor(player, 10, rankup2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+                        AddGossipItemFor(player, 10, "         -Buy-         ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2007);
+                        AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
+                    }
+               }
+
                 AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
                 AddGossipItemFor(player, 10, "-----------------------", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
                 AddGossipItemFor(player, 10, "-Bank Balance-", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2000);
@@ -926,21 +918,22 @@ class VIP_MG_BANKER : public CreatureScript
 
             static bool OnGossipSelect(Player* player, Creature* creature, uint32 /* sender */, uint32 actions)
             {
-                TC_LOG_INFO("server.loading", "MG_BANKER::OnSelect :%u", actions);
+                if (sVIP->GetVIPTEST()) { TC_LOG_INFO("server.loading", "MG_BANKER::OnSelect :%u", actions); }
 
                 uint32 accountId = player->GetSession()->GetAccountId();
                 uint8 pVIP = sVIP->GetPlayerVIP(accountId);
                 uint32 MG = sVIP->GetPlayerMG(accountId);
                 uint32 itemId = sVIP->GetVIPMGID();
+                uint32 vipitemid = sVIP->GetVIPSTONEID();
                 uint32 pMg = player->GetItemCount(itemId);
                 uint32 pVotes = sVIP->GetPlayerVOTES(accountId);
+                uint32 vipvotecount = sVIP->GetVIPVOTECOUNT();
 
                 switch (actions)
                 {
                 case GOSSIP_ACTION_INFO_DEF + 2000: // loopbacks
 
                     player->PlayerTalkClass->ClearMenus();
-                    // player->CLOSE_GOSSIP_MENU();
 
                     OnGossipHello(player, creature);
                     break;
@@ -952,11 +945,9 @@ class VIP_MG_BANKER : public CreatureScript
                     if (player->GetItemCount(itemId) == 0)
                     {
                         sVIP->SetPlayerMG(accountId, MG + pMg);
-
-                    };
+                    }
 
                     player->PlayerTalkClass->ClearMenus();
-                    // player->CLOSE_GOSSIP_MENU();
 
                     OnGossipHello(player, creature);
                     break;
@@ -968,9 +959,7 @@ class VIP_MG_BANKER : public CreatureScript
                     if (player->AddItem(itemId, 10))
                     {
                         sVIP->SetPlayerMG(accountId, MG - 10);
-                        // player->CLOSE_GOSSIP_MENU();
                     }
-                    break;
 
                 case GOSSIP_ACTION_INFO_DEF + 2003: // Withdraw 100
 
@@ -979,11 +968,7 @@ class VIP_MG_BANKER : public CreatureScript
                     if (player->AddItem(itemId, 100))
                     {
                         sVIP->SetPlayerMG(accountId, MG - 101);
-                        // player->CLOSE_GOSSIP_MENU();
                     }
-
-                    OnGossipHello(player, creature);
-                    break;
 
                 case GOSSIP_ACTION_INFO_DEF + 2004: // Withdraw 1,000
                     player->PlayerTalkClass->ClearMenus();
@@ -991,11 +976,7 @@ class VIP_MG_BANKER : public CreatureScript
                     if (player->AddItem(itemId, 1000))
                     {
                         sVIP->SetPlayerMG(accountId, MG - 1010);
-                        // player->CLOSE_GOSSIP_MENU();
                     }
-
-                    OnGossipHello(player, creature);
-                    break;
 
                 case GOSSIP_ACTION_INFO_DEF + 2005: // Withdraw 10,000
                     player->PlayerTalkClass->ClearMenus();
@@ -1003,11 +984,7 @@ class VIP_MG_BANKER : public CreatureScript
                     if (player->AddItem(itemId, 10000))
                     {
                         sVIP->SetPlayerMG(accountId, MG - 10100);
-                        // player->CLOSE_GOSSIP_MENU();
                     }
-
-                    OnGossipHello(player, creature);
-                    break;
 
                 case GOSSIP_ACTION_INFO_DEF + 2006: // Withdraw 100,000
                     player->PlayerTalkClass->ClearMenus();
@@ -1015,7 +992,21 @@ class VIP_MG_BANKER : public CreatureScript
                     if (player->AddItem(itemId, 100000))
                     {
                         sVIP->SetPlayerMG(accountId, MG - 101000);
-                        // // player->CLOSE_GOSSIP_MENU();
+                    }
+
+                case GOSSIP_ACTION_INFO_DEF + 2007: // trade VIP votes for Rank increase item
+                    player->PlayerTalkClass->ClearMenus();
+
+                    if (sVIP->GetPlayerVIP(accountId) < sVIP->GetVIPMAX())
+                    {
+                        if (player->AddItem(vipitemid, 1))
+                        {
+                            sVIP->SetPlayerVOTES(accountId, (pVotes - vipvotecount));
+                        }
+                    }
+                    else
+                    {
+                        ChatHandler(player->GetSession()).PSendSysMessage("%sYou are allready the maximum VIP rank:%s%u%s and dont require an upgrade.", red.c_str(), white.c_str(), sVIP->GetVIPMAX(), red.c_str());
                     }
 
                     OnGossipHello(player, creature);
@@ -1023,7 +1014,6 @@ class VIP_MG_BANKER : public CreatureScript
                 }
                 return true;
             }
-            //       };
         };
         CreatureAI* GetAI(Creature* creature) const override
         {
@@ -1033,11 +1023,11 @@ class VIP_MG_BANKER : public CreatureScript
 
 void AddSC_Grumboz_VIP_Core()
 {
-	new VIP_Load_Conf;
-	new Grumboz_VIP_Account_Engine;
-	new Grumboz_VIP_Player_Engine;
-	new VIP_commands;
-	new VIP_Coin_Script;
-	new VIP_Stone_Script;
-	new VIP_MG_BANKER;
+	new VIP_Load_Conf();
+	new Grumboz_VIP_Account_Engine();
+	new Grumboz_VIP_Player_Engine();
+	new VIP_commands();
+	new VIP_Coin_Script();
+	new VIP_Stone_Script();
+	new VIP_MG_BANKER();
 }
