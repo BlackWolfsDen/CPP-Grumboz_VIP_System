@@ -6,14 +6,22 @@
 # These settings provide a flexibility to the system.
 #
 # 	
-#	VIP.MAX
+#	VIP MAX
 #		Description: Max VIP Level for VIP System. max Uint32 value.
 #		Default:     6
 #
 
 VIP.MAX = 6
 
-#	VIP.OFFSET
+#	VIP START
+#		Description: Starting VIP rank for new accounts. Use 1 for new accounts start
+#			      with VIP rank 1.
+#		Default:     0
+#
+
+VIP.START = 0
+
+#	VIP OFFSET
 #		Description: float multiplier for each vip rank.
 #		this is used for stat mod's. i.e. mod = VIP rank * offset.
 #		Default:     0.05f 5% muliplier used per VIP rank
@@ -21,7 +29,7 @@ VIP.MAX = 6
 
 VIP.OFFSET = 0.05
 
-#	VIP.VOTE.ENABE
+#	VIP VOTE ENABE
 #		Description: Votes can earn higher vip ranks.
 #		Default: 1 . 0 off // 1 on.
 #
@@ -29,7 +37,7 @@ VIP.OFFSET = 0.05
 VIP.VOTE_ENABLE = 1
 
 #
-#	VIP.VOTE.COUNT
+#	VIP VOTE COUNT
 #		Description: how many Votes to earn each level of VIP.
 #		Default: 125 votes per.
 #
@@ -37,7 +45,7 @@ VIP.VOTE_ENABLE = 1
 VIP.VOTE_COUNT = 125
 
 #
-#	VIP.COIN
+#	VIP COIN
 #		Description: an item that is clickable to show a players VIP stats
 #		Default: 63020
 #
@@ -45,7 +53,7 @@ VIP.VOTE_COUNT = 125
 VIP.COIN = 63020
 
 #
-#	VIP.STONE
+#	VIP STONE
 #		Description: an item that is clickable and will increase a players VIP level.
 #		Default: 63021
 #
@@ -53,7 +61,7 @@ VIP.COIN = 63020
 VIP.STONE =  63021
 
 #
-#	VIP.MAGIC.GOLD
+#	VIP MAGIC GOLD
 #		Description: just Global custom currency id that can be accessed
 #		by another character via the VIP banker deposit/withdrawal
 #		Default: 44209
@@ -62,14 +70,14 @@ VIP.STONE =  63021
 VIP.MAGIC_GOLD = 44209
 
 #
-#	VIP.TP.BONUS
+#	VIP TP BONUS
 #		Description: how many extra TP's to award per VIP level.
 #		Default: 14 per VIP level.
 #
 
 VIP.TP_BONUS = 14
 
-#	VIP.LEVEL_BONUS_ENABE
+#	VIP LEVEL BONUS ENABE
 #		Description: players can reach higher levels per VIP..
 #		Default: 1 . 0 off // 1 on.
 #
@@ -78,13 +86,19 @@ VIP.LEVEL_BONUS_ENABLE = 1
 
 #
 #
-#	VIP.LEVEL_BONUS
-#		Description: how many extra level's a player can gain per 
-VIP level.
+#	VIP LEVEL BONUS
+#		Description: how many extra level's a player can gain per VIP level.
 #		Default: 1
 #
 
 VIP.LEVEL_BONUS = 1
+
+#
+#	VIP TEST
+#		Description: allows the system to belch individual actions within the script
+#		Default: 0
+
+VIP.TEST = 1
 
 #
 ###################################################################################################
