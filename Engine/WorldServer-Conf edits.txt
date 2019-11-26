@@ -98,7 +98,7 @@ VIP.LEVEL_BONUS = 1
 #		Description: allows the system to belch individual actions within the script
 #		Default: 0
 
-VIP.TEST = 1
+VIP.TEST = 0
 
 #
 ###################################################################################################
