@@ -243,9 +243,10 @@ public: VIP_Load_Conf() : WorldScript("VIP_Load_Conf") { };
 			{
 				TC_LOG_INFO("server.loading", "|  VIP LEVEL BONUS : ENABLED       ");
 				TC_LOG_INFO("server.loading", "|  VIP LEVEL BONUS : %u", sVIP->GetLEVELBONUS());
-				TC_LOG_INFO("server.loading", "|  VIP offset : %.2f", sVIP->GetVIPOFFSET());
 			}
 
+			TC_LOG_INFO("server.loading", "|  VIP offset : %.2f", sVIP->GetVIPOFFSET());
+				
 			if (!sObjectMgr->GetItemTemplate(sVIP->GetVIPCOINID()))
 			{
 				TC_LOG_INFO("server.loading", "! VIP COIN %u MISSING FROM DB ! SERVER CRASHING !", sVIP->GetVIPCOINID());
