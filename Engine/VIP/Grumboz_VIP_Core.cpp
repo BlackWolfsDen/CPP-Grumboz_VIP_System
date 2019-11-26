@@ -1,6 +1,6 @@
 // Vip core engine
 // By slp13at420 of EmuDevs.com
-// TDB 335.1911
+// TDB 335.19111
 
 #include "AccountMgr.h"
 #include "chat.h"
