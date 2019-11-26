@@ -15,7 +15,7 @@ VIP.MAX = 6
 
 #	VIP START
 #		Description: Starting VIP rank for new accounts. Use 1 for new accounts start
-#			      with VIP rank 1.
+#			      with VIP rank 1 or 0 to start with VIP rank 0. Bool value (0 or 1)
 #		Default:     0
 #
 
